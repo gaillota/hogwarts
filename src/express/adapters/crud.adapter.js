@@ -14,14 +14,14 @@ module.exports = (modelName) => {
             page: req.query.page,
         },
         response: {
-            respondWithNoDocuments({ count, offset, total }) {
+            respondWithNoDocuments() {
                 res.json({
                     data: {
                         [modelName]: [],
                     },
-                    count,
-                    offset,
-                    total,
+                    count: 0,
+                    offset: 0,
+                    total: 0,
                 })
             },
             respondWithFoundDocuments({ documents, count, offset, total }) {

@@ -24,10 +24,10 @@ const fetchDocuments = async ({
         ])
         
         if (!documents || !documents.length) {
-            return respondWithNoDocuments({ count, offset, total })
+            return respondWithNoDocuments()
         }
         
-        respondWithFoundDocuments({ documents, count, offset, total })
+        respondWithFoundDocuments({ documents, count: documents.length, offset, total })
     } catch (err) {
         respondWithError(err)
     }
