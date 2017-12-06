@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000
 const appConfig = {
     port,
     endpoint: '/api',
-    mimeTypes: ['application/json', 'application/x-www-form-urlencoded'],
+    mimeTypes: ['application/json', 'application/x-www-form-urlencoded', 'multipart/form-data'],
     roles: ['ADMIN', 'SUPER_ADMIN'], // Default
     secret: 'DumbledoreIsDead',
     middlewares: [
@@ -30,11 +30,15 @@ const articlesConfig = {
     schema: {
         title: {
             type: String,
+            required: true,
+            trim: true,
         },
         description: {
             type: String,
+            maxlength: 500,
         },
     },
+    timestamps: true,
     crud: {
         [CRUD_METHODS.PAGINATE]: {
             anonymous: true,

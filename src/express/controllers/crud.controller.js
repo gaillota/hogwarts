@@ -14,9 +14,9 @@ module.exports = (modelName, manager) => {
     const expressAdapter = expressCrudAdapter(modelName)
     const databaseAdapter = databaseCrudAdapter(manager)
     
-    const findBy = (req, res, next) => {
-        const { request, response } = expressAdapter.findBy(req, res, next)
-        const { data } = databaseAdapter.findBy()
+    function list(req, res, next) {
+        const { request, response } = expressAdapter.list(req, res, next)
+        const { data } = databaseAdapter.list()
         
         fetchDocuments({
             request,
@@ -25,7 +25,7 @@ module.exports = (modelName, manager) => {
         })
     }
     
-    const create = (req, res, next) => {
+    function create(req, res, next) {
         const { request, response } = expressAdapter.create(req, res, next)
         const { data } = databaseAdapter.create()
         
@@ -36,7 +36,7 @@ module.exports = (modelName, manager) => {
         })
     }
     
-    const findOne = (req, res, next) => {
+    function findOne(req, res, next) {
         const { request, response } = expressAdapter.findOne(req, res, next)
         const { data } = databaseAdapter.findOne()
         
@@ -47,13 +47,9 @@ module.exports = (modelName, manager) => {
         })
     }
     
-    const replace = (req, res, next) => {
-        // TODO: Implement function
-    }
-    
-    const update = (req, res, next) => {
-        const { request, response } = expressAdapter.update(req, res, next)
-        const { data } = databaseAdapter.update()
+    function replace(req, res, next) {
+        const { request, response } = expressAdapter.replace(req, res, next)
+        const { data } = databaseAdapter.replace()
         
         updateDocument({
             request,
@@ -62,7 +58,11 @@ module.exports = (modelName, manager) => {
         })
     }
     
-    const remove = (req, res, next) => {
+    function update(req, res, next) {
+        // TODO: Implement
+    }
+    
+    function remove(req, res, next) {
         const { request, response } = expressAdapter.remove(req, res, next)
         const { data } = databaseAdapter.remove()
         
@@ -74,7 +74,7 @@ module.exports = (modelName, manager) => {
     }
     
     return {
-        findBy,
+        list,
         create,
         findOne,
         update,

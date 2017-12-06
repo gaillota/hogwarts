@@ -1,8 +1,8 @@
 /* eslint-disable global-require */
 module.exports = {
     insertDocument: require('./create'),
-    fetchDocumentById: require('./find-one'),
-    fetchDocuments: require('./find-by'),
+    fetchDocumentById: require('./get'),
+    fetchDocuments: require('./list'),
     updateDocument: require('./update'),
     deleteDocument: require('./remove'),
 }

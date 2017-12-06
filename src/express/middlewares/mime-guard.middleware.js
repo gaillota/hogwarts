@@ -1,14 +1,16 @@
 const {
-    CONTENT_TYPE_ERROR
+    CONTENT_TYPE_ERROR,
 } = require('../../utils/errors')
 
-module.exports = (mimeTypes = []) => (req, res, next) => {
-    const contentType = req.get('Content-Type')
-    const allowedContentTypes = mimeTypes && mimeTypes.length ? mimeTypes : ['application/json', 'application/x-www-form-urlencoded']
+const defaultMimeTypes = ['application/json', 'application/x-www-form-urlencoded']
 
-    if (!req.xhr && (!contentType || !allowedContentTypes.includes(contentType))) {
+module.exports = (mimeTypes = defaultMimeTypes) => (req, res, next) => {
+    const contentType = req.get('Content-Type')
+    const isAllowed = contentType && mimeTypes.some(mimeType => contentType.includes(mimeType))
+    
+    if (!req.xhr && !isAllowed) {
         return next(CONTENT_TYPE_ERROR)
     }
-
+    
     next()
 }

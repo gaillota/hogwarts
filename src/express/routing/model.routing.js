@@ -1,34 +1,36 @@
 const express = require('express')
+const validate = require('express-validation')
 const _isArray = require('lodash/isArray')
 
+const { list } = require('../validations/crud.validation')
 const authenticate = require('../middlewares/authenticate.middleware')
 const isGranted = require('../middlewares/roles-guard.middleware')
 const crudController = require('../controllers/crud.controller')
-const Gateway = require('../../database/gateways')
+const { MongoGateway } = require('../../database/gateways')
 const DocumentManager = require('../../database/managers/document.manager')
 
 const defaultCrud = ({ config, router }) => {
     const {
         name,
         schema,
-        adapter,
+        timestamps,
     } = config
     // Gateway passed via config (or default)
-    const gateway = new Gateway(name, schema)
-    // Abstraction class using above gateway to provide classic crud functions
-    const manager = new DocumentManager(gateway)
+    const gateway = MongoGateway({ modelName: name, schema, timestamps })
+    // // Abstraction class using above gateway to provide classic crud functions
+    // const manager = new DocumentManager(mongoGateway)
     // Controller used for crud middlewares
-    const controller = crudController(name, manager)
+    const controller = crudController(name, gateway)
     
     router.route('/')
-        .get(controller.findBy)
-        .post(controller.create)
-    
-    router.route('/:id')
-        .get(controller.findOne)
-        .put(controller.replace)
-        .patch(controller.update)
-        .delete(controller.remove)
+        .get(validate(list), controller.list)
+    //     .post(controller.create)
+    //
+    // router.route('/:id')
+    //     .get(controller.findOne)
+    //     .put(controller.replace)
+    //     .patch(controller.replace)
+    //     .delete(controller.remove)
 }
 
 const customRoute = (route, router) => {

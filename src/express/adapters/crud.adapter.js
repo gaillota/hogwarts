@@ -1,29 +1,38 @@
+const { NO_CONTENT } = require('http-status')
+
 const {
     NOT_FOUND_ERROR,
 } = require('../../utils/errors')
 
 module.exports = (modelName) => {
     // GET /:modelName/
-    const findBy = (req, res, next) => ({
+    const list = (req, res, next) => ({
         request: {
-            criteria: req.query,
+            query: req.query.query,
+            offset: req.query.offset,
+            count: req.query.count,
+            page: req.query.page,
         },
         response: {
-            respondWithNoDocuments() {
-                req.output = {
+            respondWithNoDocuments({ count, offset, total }) {
+                res.json({
                     data: {
                         [modelName]: [],
                     },
-                }
-                next()
+                    count,
+                    offset,
+                    total,
+                })
             },
-            respondWithFoundDocuments(documents) {
-                req.output = {
+            respondWithFoundDocuments({ documents, count, offset, total }) {
+                res.json({
                     data: {
                         [modelName]: documents,
                     },
-                }
-                next()
+                    count,
+                    offset,
+                    total
+                })
             },
             respondWithError(err) {
                 next(err)
@@ -37,11 +46,8 @@ module.exports = (modelName) => {
             document: req.body,
         },
         response: {
-            respondWithResult(result) {
-                req.response = {
-                    result,
-                }
-                next()
+            respondWithSuccess() {
+                res.status(NO_CONTENT).end()
             },
             respondWithError(err) {
                 next(err)
@@ -59,10 +65,9 @@ module.exports = (modelName) => {
                 return next(NOT_FOUND_ERROR)
             },
             respondWithCorrectDocument(document) {
-                req.response = {
+                res.json({
                     data: document,
-                }
-                next()
+                })
             },
             respondWithError(err) {
                 next(err)
@@ -78,10 +83,9 @@ module.exports = (modelName) => {
         },
         response: {
             respondWithResult(result) {
-                req.response = {
-                    result,
-                }
-                next()
+                res.json({
+                    data: result,
+                })
             },
             respondWithError(err) {
                 next(err)
@@ -101,10 +105,7 @@ module.exports = (modelName) => {
         },
         response: {
             respondWithResult() {
-                req.response = {
-                    status: 204,
-                }
-                next()
+                res.status(NO_CONTENT).end()
             },
             respondWithError(err) {
                 next(err)
@@ -114,7 +115,7 @@ module.exports = (modelName) => {
     
     return {
         findOne,
-        findBy,
+        list,
         create,
         update,
         replace,

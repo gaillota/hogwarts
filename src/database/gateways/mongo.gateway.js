@@ -1,73 +1,77 @@
 const mongoose = require('mongoose')
 
-const { Schema } = mongoose
-
-module.exports = class MongoGateway {
-    constructor(modelName, schema = {}) {
-        this.modelName = modelName
-        this.schema = new Schema(schema)
-        this.model = mongoose.model(this.modelName, this.schema)
+module.exports = ({ modelName, schema, timestamps }) => {
+    console.log('schema:', schema)
+    const modelSchema = new mongoose.Schema(schema, {
+        timestamps
+    })
+    const Model = mongoose.model(modelName, modelSchema)
+    
+    /**
+     * Find document by criteria
+     *
+     * @param query
+     * @param limit
+     * @param offset
+     * @param fields
+     * @return Promise
+     */
+    const list = (query, limit, offset, fields) => {
+        const options = {
+            skip: offset,
+            limit,
+        }
+        
+        return Model.find(query, fields, options).exec()
     }
     
-    insert(newDocument) {
-        return new Promise((resolve, reject) => {
-            const document = new this.model(newDocument)
-            document.save((err, entity) => {
-                if (err) {
-                    return reject(err)
-                }
-                
-                resolve(entity)
-            })
-        })
-    }
+    /**
+     * Create new document
+     *
+     * @param newDocument
+     * @return Promise
+     */
+    const create = newDocument => Model.create(newDocument)
     
-    findBy(criteria) {
-        return new Promise((resolve, reject) => {
-            this.model.find(criteria, (err, documents) => {
-                if (err) {
-                    return reject(err)
-                }
-                
-                resolve(documents)
-            })
-        })
-    }
+    /**
+     * Fetch a document by ID
+     *
+     * @param id
+     * @return Promise
+     */
+    const findById = id => Model.findById(id).exec()
     
-    findById(id) {
-        return new Promise((resolve, reject) => {
-            this.model.findById(id, (err, document) => {
-                if (err) {
-                    return reject(err)
-                }
-                
-                resolve(document)
-            })
-        })
-    }
+    /**
+     * Replace whole document
+     *
+     * @param id
+     * @param newDocument
+     * @return Promise
+     */
+    const replace = (id, newDocument) => Model.findByIdAndUpdate(id, newDocument).exec()
     
-    update(id, newDocument) {
-        return new Promise((resolve, reject) => {
-            this.model.findByIdAndUpdate(id, newDocument, (err) => {
-                if (err) {
-                    return reject(err)
-                }
-                
-                resolve(1)
-            })
-        })
-    }
+    /**
+     * Remove document by ID
+     *
+     * @param id
+     * @return Promise
+     */
+    const remove = id => Model.findByIdAndRemove(id).exec()
     
+    /**
+     * Count documents
+     *
+     * @param query
+     * @return Promise
+     */
+    const count = (query = {}) => Model.count(query).exec()
     
-    remove(id) {
-        return new Promise((resolve, reject) => {
-            this.model.findByIdAndRemove(id, (err) => {
-                if (err) {
-                    return reject(err)
-                }
-                
-                resolve(1)
-            })
-        })
+    return {
+        list,
+        create,
+        findById,
+        replace,
+        remove,
+        count,
     }
 }

@@ -1,4 +1,23 @@
 module.exports = (manager) => {
+    const list = () => ({
+        data: {
+            fetchDocumentsBy({ query, limit, offset }) {
+                return manager.list(query, limit, offset)
+            },
+            getDocumentsCount() {
+                return manager.count()
+            }
+        },
+    })
+    
+    const create = () => ({
+        data: {
+            persistDocument(document) {
+                return manager.create(document)
+            },
+        },
+    })
+    
     const findOne = () => ({
         data: {
             getDocumentById(id) {
@@ -7,34 +26,16 @@ module.exports = (manager) => {
         },
     })
     
-    const findBy = () => ({
-        data: {
-            getDocumentsBy(criteria) {
-                return manager.getDocumentsBy(criteria)
-            },
-        },
-    })
-    
-    const create = () => ({
-        data: {
-            insertDocument(document) {
-                return manager.create(document)
-            },
-        },
-    })
-    
     const update = () => ({
         data: {
             updateDocumentWithId(id, doc) {
-                return manager.update(id, doc)
+                return manager.replace(id, doc)
             },
         },
     })
     
     const replace = () => ({
-        data: {
-        
-        }
+        data: {},
     })
     
     const remove = () => ({
@@ -47,10 +48,10 @@ module.exports = (manager) => {
     
     return {
         findOne,
-        findBy,
+        list,
         create,
         update,
         remove,
-        replace
+        replace,
     }
 }

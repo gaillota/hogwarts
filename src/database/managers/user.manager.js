@@ -33,13 +33,13 @@ module.exports = class UserManager extends DocumentManager {
     
     // Do not unset verifyToken in case verifyUser gets called several times
     verifyUser(user) {
-        return this.update(this.getId(user), {
+        return this.replace(this.getId(user), {
             verified: true,
         })
     }
     
     persistVerificationTokenForUser(user, token) {
-        return this.update(this.getId(user), {
+        return this.replace(this.getId(user), {
             verifyToken: token,
         })
     }
@@ -49,7 +49,7 @@ module.exports = class UserManager extends DocumentManager {
     }
     
     findOneBy(criteria) {
-        return this.findBy(criteria).then((data) => {
+        return this.list(criteria).then((data) => {
             if (data.length && data.length > 1) {
                 throw new Error('Query has more than 1 result')
             }
@@ -59,7 +59,7 @@ module.exports = class UserManager extends DocumentManager {
     }
     
     findBy(criteria) {
-        return this.gateway.findBy(criteria)
+        return this.gateway.list(criteria)
     }
     
     update(id, props) {
@@ -67,7 +67,7 @@ module.exports = class UserManager extends DocumentManager {
         // TODO: Update with a mergeDeep
         return this.findOneById(id).then((user) => {
             console.log('user:', user.toObject())
-            return this.gateway.update(id, {
+            return this.gateway.replace(id, {
                 ...user,
                 ...props
             })

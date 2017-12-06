@@ -13,7 +13,7 @@ const {
 module.exports = (config) => {
     const {
         endpoint,
-        mimeTypes = ['application/json'],
+        mimeTypes,
         middlewares = [],
     } = config
     

@@ -2,24 +2,33 @@ module.exports = class DocumentManager {
     constructor(gateway) {
         this.gateway = gateway
     }
-
+    
     create(document) {
-        return this.gateway.insert(document)
+        return this.gateway.create(document)
     }
-
-    getDocumentsBy(criteria) {
-        return this.gateway.findBy(criteria)
+    
+    list(query, limit, offset) {
+        const options = {
+            skip: offset,
+            limit,
+        }
+        
+        return this.gateway.list(query, null, options)
     }
-
+    
     getDocumentById(id) {
         return this.gateway.findById(id)
     }
-
+    
     update(id, document, replace = false) {
-        return this.gateway.update(id, document, replace)
+        return this.gateway.replace(id, document, replace)
     }
-
+    
     remove(id) {
         return this.gateway.remove(id)
+    }
+    
+    count(query) {
+        return this.gateway.count(query)
     }
 }

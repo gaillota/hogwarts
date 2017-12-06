@@ -62,7 +62,7 @@ module.exports = (manager, loginLabel) => {
                 return manager.findOneBy({[loginLabel]: login})
             },
             persistTokenForUser(user, token) {
-                return manager.update(manager.getId(user), {
+                return manager.replace(manager.getId(user), {
                     resetToken: token,
                 })
             },
@@ -80,7 +80,7 @@ module.exports = (manager, loginLabel) => {
                 return manager.hashPassword(password)
             },
             updatePasswordForUser(user, password) {
-                return manager.update(manager.getId(user), {
+                return manager.replace(manager.getId(user), {
                     password,
                 })
             },
