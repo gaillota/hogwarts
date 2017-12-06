@@ -8,7 +8,7 @@ module.exports = ({ modelName, schema, timestamps }) => {
     const Model = mongoose.model(modelName, modelSchema)
     
     /**
-     * Find document by criteria
+     * Fetch documents by criteria
      *
      * @param query
      * @param limit

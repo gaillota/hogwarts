@@ -36,9 +36,9 @@ module.exports = (modelName, manager) => {
         })
     }
     
-    function findOne(req, res, next) {
-        const { request, response } = expressAdapter.findOne(req, res, next)
-        const { data } = databaseAdapter.findOne()
+    function one(req, res, next) {
+        const { request, response } = expressAdapter.one(req, res, next)
+        const { data } = databaseAdapter.one()
         
         fetchDocumentById({
             request,
@@ -76,7 +76,7 @@ module.exports = (modelName, manager) => {
     return {
         list,
         create,
-        findOne,
+        one,
         update,
         replace,
         remove

@@ -17,9 +17,9 @@ const fetchDocuments = async ({
                               }) => {
     try {
         // eslint-disable-next-line no-param-reassign
-        offset = offset || count * (page - 1)
+        const skip = offset || count * (page - 1)
         const [documents, total] = await Promise.all([
-            fetchDocumentsBy({ query, limit: count, offset }),
+            fetchDocumentsBy({ query, limit: count, offset: skip }),
             getDocumentsCount(),
         ])
         
@@ -27,7 +27,7 @@ const fetchDocuments = async ({
             return respondWithNoDocuments()
         }
         
-        respondWithFoundDocuments({ documents, count: documents.length, offset, total })
+        respondWithFoundDocuments({ documents, count: documents.length, offset: skip, total })
     } catch (err) {
         respondWithError(err)
     }

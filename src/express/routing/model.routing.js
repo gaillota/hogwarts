@@ -26,8 +26,8 @@ const defaultCrud = ({ config, router }) => {
         .get(validate(list), controller.list)
         .post(controller.create)
 
-    // router.route('/:id')
-    //     .get(controller.findOne)
+    router.route('/:id')
+        .get(controller.one)
     //     .put(controller.replace)
     //     .patch(controller.replace)
     //     .delete(controller.remove)

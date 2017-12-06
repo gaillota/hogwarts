@@ -1,4 +1,4 @@
-const retrieveDocumentWithId = async ({
+const fetchDocumentById = async ({
                                           request: {
                                               documentId,
                                           },
@@ -18,8 +18,9 @@ const retrieveDocumentWithId = async ({
         }
         respondWithCorrectDocument(document)
     } catch (err) {
+        console.log('An error happened')
         respondWithError(err)
     }
 }
 
-module.exports = retrieveDocumentWithId
+module.exports = fetchDocumentById

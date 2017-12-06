@@ -37,6 +37,10 @@ const articlesConfig = {
             type: String,
             maxlength: 500,
         },
+        tags: {
+            type: String,
+            maxlength: 100
+        }
     },
     timestamps: true,
     crud: {

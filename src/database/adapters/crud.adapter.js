@@ -19,10 +19,10 @@ module.exports = (manager) => {
         },
     })
     
-    const findOne = () => ({
+    const one = () => ({
         data: {
             getDocumentById(id) {
-                return manager.getDocumentById(id)
+                return manager.findById(id)
             },
         },
     })
@@ -48,7 +48,7 @@ module.exports = (manager) => {
     })
     
     return {
-        findOne,
+        one,
         list,
         create,
         update,

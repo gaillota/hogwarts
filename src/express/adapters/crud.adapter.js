@@ -56,7 +56,7 @@ module.exports = (modelName) => {
     })
     
     // GET /:modelName/:id
-    const findOne = (req, res, next) => ({
+    const one = (req, res, next) => ({
         request: {
             documentId: req.params.id,
         },
@@ -79,7 +79,7 @@ module.exports = (modelName) => {
     const update = (req, res, next) => ({
         request: {
             documentId: req.params.id,
-            newDocument: req.body,
+            document: req.body,
         },
         response: {
             respondWithResult(result) {
@@ -94,9 +94,11 @@ module.exports = (modelName) => {
     })
     
     // PUT /:modelName/:id
-    const replace = (req, res, next) => {
-    
-    }
+    const replace = (req, res, next) => ({
+        request: {
+        
+        }
+    })
     
     // DELETE /:modelName/:id
     const remove = (req, res, next) => ({
@@ -114,7 +116,7 @@ module.exports = (modelName) => {
     })
     
     return {
-        findOne,
+        one,
         list,
         create,
         update,
