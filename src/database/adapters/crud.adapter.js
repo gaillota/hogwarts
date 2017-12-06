@@ -13,6 +13,7 @@ module.exports = (manager) => {
     const create = () => ({
         data: {
             persistDocument(document) {
+                console.log('document:', document)
                 return manager.create(document)
             },
         },
