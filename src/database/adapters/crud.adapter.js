@@ -30,7 +30,7 @@ module.exports = (manager) => {
     const update = () => ({
         data: {
             updateDocumentWithId(id, doc) {
-                return manager.replace(id, doc)
+                return manager.update(id, doc)
             },
         },
     })

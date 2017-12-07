@@ -39,3 +39,8 @@ module.exports.MISSING_PARAM_ERROR = param => ({
     status: 422,
     message: `Parameter missing: ${param}`,
 })
+
+module.exports.EMPTY_BODY = {
+    status: 422,
+    message: 'Body is empty'
+}

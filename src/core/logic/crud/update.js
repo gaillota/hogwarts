@@ -1,18 +1,28 @@
 const updateDocument = async ({
                                   request: {
                                       documentId,
-                                      newDocument,
+                                      updatedFields,
                                   },
                                   data: {
                                       updateDocumentWithId,
                                   },
                                   response: {
+                                      respondWithIdRequired,
+                                      respondWithEmptyDocument,
                                       respondWithResult,
                                       respondWithError,
                                   },
                               }) => {
     try {
-        const result = await updateDocumentWithId(documentId, newDocument)
+        if (!documentId) {
+            return respondWithIdRequired()
+        }
+        if (!updatedFields || !Object.keys(updatedFields).length) {
+            return respondWithEmptyDocument()
+        }
+        
+        const result = await updateDocumentWithId(documentId, updatedFields)
+        console.log('result:', result)
         respondWithResult(result)
     } catch (err) {
         respondWithError(err)

@@ -7,7 +7,6 @@ const authenticate = require('../middlewares/authenticate.middleware')
 const isGranted = require('../middlewares/roles-guard.middleware')
 const crudController = require('../controllers/crud.controller')
 const { MongoGateway } = require('../../database/gateways')
-const DocumentManager = require('../../database/managers/document.manager')
 
 const defaultCrud = ({ config, router }) => {
     const {
@@ -28,9 +27,9 @@ const defaultCrud = ({ config, router }) => {
 
     router.route('/:id')
         .get(controller.one)
-    //     .put(controller.replace)
-    //     .patch(controller.replace)
-    //     .delete(controller.remove)
+        .patch(controller.update)
+        // .put(controller.replace)
+        .delete(controller.remove)
 }
 
 const customRoute = (route, router) => {

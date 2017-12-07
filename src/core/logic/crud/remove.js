@@ -6,13 +6,13 @@ const deleteDocument = async ({
                                              deleteDocumentWithId,
                                          },
                                          response: {
-                                             respondWithResult,
+                                             respondWithSuccess,
                                              respondWithError,
                                          },
                                      }) => {
     try {
-        const result = await deleteDocumentWithId(documentId)
-        respondWithResult(result)
+        await deleteDocumentWithId(documentId)
+        respondWithSuccess()
     } catch (err) {
         respondWithError(err)
     }

@@ -2,6 +2,8 @@ const { NO_CONTENT } = require('http-status')
 
 const {
     NOT_FOUND_ERROR,
+    MISSING_PARAM_ERROR,
+    EMPTY_BODY,
 } = require('../../utils/errors')
 
 module.exports = (modelName) => {
@@ -24,14 +26,19 @@ module.exports = (modelName) => {
                     total: 0,
                 })
             },
-            respondWithFoundDocuments({ documents, count, offset, total }) {
+            respondWithFoundDocuments({
+                                          documents,
+                                          count,
+                                          offset,
+                                          total,
+                                      }) {
                 res.json({
                     data: {
                         [modelName]: documents,
                     },
                     count,
                     offset,
-                    total
+                    total,
                 })
             },
             respondWithError(err) {
@@ -79,9 +86,15 @@ module.exports = (modelName) => {
     const update = (req, res, next) => ({
         request: {
             documentId: req.params.id,
-            document: req.body,
+            updatedFields: req.body,
         },
         response: {
+            respondWithIdRequired() {
+                next(MISSING_PARAM_ERROR('id'))
+            },
+            respondWithEmptyDocument() {
+                next(EMPTY_BODY)
+            },
             respondWithResult(result) {
                 res.json({
                     data: result,
@@ -95,9 +108,7 @@ module.exports = (modelName) => {
     
     // PUT /:modelName/:id
     const replace = (req, res, next) => ({
-        request: {
-        
-        }
+        request: {},
     })
     
     // DELETE /:modelName/:id
@@ -106,7 +117,7 @@ module.exports = (modelName) => {
             documentId: req.params.id,
         },
         response: {
-            respondWithResult() {
+            respondWithSuccess() {
                 res.status(NO_CONTENT).end()
             },
             respondWithError(err) {

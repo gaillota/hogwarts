@@ -1,9 +1,8 @@
 const mongoose = require('mongoose')
 
 module.exports = ({ modelName, schema, timestamps }) => {
-    console.log('schema:', schema)
     const modelSchema = new mongoose.Schema(schema, {
-        timestamps
+        timestamps,
     })
     const Model = mongoose.model(modelName, modelSchema)
     
@@ -42,13 +41,29 @@ module.exports = ({ modelName, schema, timestamps }) => {
     const findById = id => Model.findById(id).exec()
     
     /**
+     * Update document
+     *
+     * @param id
+     * @param updatedFields
+     * @param options
+     * @return Promise
+     */
+    const update = (id, updatedFields, options = {}) => Model.findByIdAndUpdate(id, updatedFields, {
+        new: true,
+        ...options
+    }).exec()
+    
+    /**
      * Replace whole document
      *
      * @param id
      * @param newDocument
      * @return Promise
      */
-    const replace = (id, newDocument) => Model.findByIdAndUpdate(id, newDocument).exec()
+    const replace = (id, newDocument) => update(id, newDocument, {
+        overwrite: true,
+        upsert: true,
+    })
     
     /**
      * Remove document by ID
@@ -70,6 +85,7 @@ module.exports = ({ modelName, schema, timestamps }) => {
         list,
         create,
         findById,
+        update,
         replace,
         remove,
         count,

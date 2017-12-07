@@ -47,9 +47,11 @@ module.exports = (modelName, manager) => {
         })
     }
     
-    function replace(req, res, next) {
-        const { request, response } = expressAdapter.replace(req, res, next)
-        const { data } = databaseAdapter.replace()
+    function update(req, res, next) {
+        const { request, response } = expressAdapter.update(req, res, next)
+        const { data } = databaseAdapter.update()
+        
+        console.log(req.body)
         
         updateDocument({
             request,
@@ -58,8 +60,11 @@ module.exports = (modelName, manager) => {
         })
     }
     
-    function update(req, res, next) {
-        // TODO: Implement
+    function replace(req, res, next) {
+        const { request, response } = expressAdapter.replace(req, res, next)
+        const { data } = databaseAdapter.replace()
+        
+        
     }
     
     function remove(req, res, next) {
@@ -79,6 +84,6 @@ module.exports = (modelName, manager) => {
         one,
         update,
         replace,
-        remove
+        remove,
     }
 }

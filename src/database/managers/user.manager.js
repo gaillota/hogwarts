@@ -11,7 +11,6 @@ module.exports = class UserManager extends DocumentManager {
     }
     
     getId(user) {
-        console.log(`getId: ${user._id}`)
         return user._id
     }
     
