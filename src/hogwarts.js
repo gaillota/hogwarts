@@ -36,7 +36,6 @@ module.exports = () => {
     
     return {
         configure(options) {
-            console.log('Configuring app with options:', options)
             config.options = options
         },
         registerModel(modelConfig) {

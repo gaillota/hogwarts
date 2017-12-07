@@ -9,57 +9,21 @@ const {
     verifyUser,
 } = require('../../core/logic/auth')
 
-const expressAdapter = require('../adapters/auth.adapter')
-const databaseAdapter = require('../../database/adapters/auth.adapter')
-const jwtAdapter = require('../../jwt/adapters/auth.adapter')
+const getExpressAdapter = require('../adapters/auth.adapter')
+const getDatabaseAdapter = require('../../database/adapters/auth.adapter')
+const getJwtAdapter = require('../../jwt/adapters/auth.adapter')
 
-module.exports = class AuthController {
-    constructor(loginLabel, secret, manager) {
-        this.loginLabel = loginLabel
-        this.manager = manager
-        
-        // Adapters
-        this.expressAdapter = expressAdapter(loginLabel)
-        this.databaseAdapter = databaseAdapter(manager, loginLabel)
-        this.jwtAdapter = jwtAdapter(secret)
-    }
+const bcrypt = require('../../utils/bcrypt')
+
+module.exports = ({ secret, manager }) => {
+    // Adapters
+    const expressAdapter = getExpressAdapter()
+    const databaseAdapter = getDatabaseAdapter(manager)
+    const jwtAdapter = getJwtAdapter(secret)
     
-    loginWithPassword(req, res, next) {
-        const { request, response } = this.expressAdapter.loginWithPassword(req, res, next)
-        const { data: { getUserWithLogin } } = this.databaseAdapter.loginWithPassword()
-        const { generateToken } = this.jwtAdapter.loginWithPassword()
-        
-        authenticateUserWithPassword({
-            request,
-            response,
-            data: {
-                getUserWithLogin,
-                generateToken,
-            },
-            mixins: {
-                verifyPassword: (user, password) => this.manager.verifyPassword(user, password),
-                isUserDisabled: user => user.disabled,
-            },
-        })
-    }
-    
-    loginWithToken(req, res, next) {
-        const { request, response } = this.jwtAdapter.loginWithToken(req, res, next)
-        const { data } = this.databaseAdapter.loginWithPassword()
-        
-        authenticateUserWithToken({
-            request,
-            response,
-            data,
-            mixins: {
-                isUserDisabled: user => user.disabled,
-            },
-        })
-    }
-    
-    register(req, res, next) {
-        const { request, response } = this.expressAdapter.register(req, res, next)
-        const { data } = this.databaseAdapter.register()
+    function register(req, res, next) {
+        const { request, response } = expressAdapter.register(req, res, next)
+        const { data } = databaseAdapter.register()
         
         createUser({
             request,
@@ -73,6 +37,9 @@ module.exports = class AuthController {
             },
             data,
             mixins: {
+                hashPassword(password) {
+                    return bcrypt.hashPassword(password)
+                },
                 generateVerificationToken() {
                     return crypto.randomBytes(64).toString('hex')
                 },
@@ -80,9 +47,43 @@ module.exports = class AuthController {
         })
     }
     
-    verify(req, res, next) {
-        const { request, response } = this.expressAdapter.verify(req, res, next)
-        const { data } = this.databaseAdapter.verify()
+    function loginWithPassword(req, res, next) {
+        const { request, response } = expressAdapter.loginWithPassword(req, res, next)
+        const { data: { getUserWithLogin } } = databaseAdapter.loginWithPassword()
+        const { generateToken } = jwtAdapter.loginWithPassword()
+        
+        authenticateUserWithPassword({
+            request,
+            response,
+            data: {
+                getUserWithLogin,
+                generateToken,
+            },
+            // TODO: Move to dedicated mixins adapter
+            mixins: {
+                verifyPassword: (user, password) => manager.verifyUser(user, password),
+                isUserDisabled: user => user.disabled,
+            },
+        })
+    }
+    
+    function loginWithToken(req, res, next) {
+        const { request, response } = jwtAdapter.loginWithToken(req, res, next)
+        const { data } = databaseAdapter.loginWithPassword()
+        
+        authenticateUserWithToken({
+            request,
+            response,
+            data,
+            mixins: {
+                isUserDisabled: user => user.disabled,
+            },
+        })
+    }
+    
+    function verify(req, res, next) {
+        const { request, response } = expressAdapter.verify(req, res, next)
+        const { data } = databaseAdapter.verify()
         
         verifyUser({
             request,
@@ -91,9 +92,9 @@ module.exports = class AuthController {
         })
     }
     
-    forgot(req, res, next) {
-        const { request, response } = this.expressAdapter.forgot(req, res, next)
-        const { data } = this.databaseAdapter.forgot()
+    function forgot(req, res, next) {
+        const { request, response } = expressAdapter.forgot(req, res, next)
+        const { data } = databaseAdapter.forgot()
         
         forgotPassword({
             request,
@@ -114,14 +115,23 @@ module.exports = class AuthController {
         })
     }
     
-    reset(req, res, next) {
-        const { request, response } = this.expressAdapter.reset(req, res, next)
-        const { data } = this.databaseAdapter.reset()
+    function reset(req, res, next) {
+        const { request, response } = expressAdapter.reset(req, res, next)
+        const { data } = databaseAdapter.reset()
         
         resetPassword({
             request,
             response,
             data,
         })
+    }
+    
+    return {
+        register,
+        verify,
+        loginWithPassword,
+        loginWithToken,
+        forgot,
+        reset
     }
 }

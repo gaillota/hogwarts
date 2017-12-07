@@ -5,14 +5,14 @@ const {
 } = require('../../utils/errors')
 
 module.exports = (secret) => {
-    const loginWithPasswordAdapter = () => ({
+    const loginWithPassword = () => ({
         generateToken(user) {
             const payload = {id: user._id}
             return jwt.sign(payload, secret)
         },
     })
 
-    const loginWithTokenAdapter = ({sub: id}, done) => ({
+    const loginWithToken = ({sub: id}, done) => ({
         request: {
             token: id,
         },
@@ -36,7 +36,7 @@ module.exports = (secret) => {
     })
 
     return {
-        loginWithPassword: loginWithPasswordAdapter,
-        loginWithToken: loginWithTokenAdapter,
+        loginWithPassword,
+        loginWithToken,
     }
 }

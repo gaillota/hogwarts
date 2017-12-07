@@ -1,17 +1,14 @@
 const forgotPassword = require('./forgot')
-const {
-    authenticateUserWithPassword,
-    authenticateUserWithToken,
-} = require('./login')
-const register = require('./register')
+const { authenticateUserWithPassword, authenticateUserWithToken } = require('./login')
+const createUser = require('./register')
 const resetPassword = require('./reset')
-const verifyPassword = require('./verify')
+const verifyUser = require('./verify')
 
 module.exports = {
     forgotPassword,
     authenticateUserWithPassword,
     authenticateUserWithToken,
-    register,
+    createUser,
     resetPassword,
-    verifyPassword,
+    verifyUser,
 }

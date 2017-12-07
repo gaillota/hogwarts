@@ -1,3 +1,4 @@
+const { NO_CONTENT } = require('http-status')
 const {
     MISSING_PARAM_ERROR,
     MISMATCH_PASSWORD,
@@ -7,13 +8,44 @@ const {
     USER_NOT_FOUND,
 } = require('../../utils/errors')
 
-module.exports = (loginLabel = 'email') => {
-    const loginWithPasswordAdapter = (req, res, next) => {
-        const { [loginLabel]: login, password } = req.body
+module.exports = () => {
+    function register(req, res, next) {
+        const {
+            email, password, confirm,
+        } = req.body
         
         return {
             request: {
-                login,
+                email,
+                password,
+                confirm,
+            },
+            response: {
+                respondWithMismatchPassword() {
+                    next(MISMATCH_PASSWORD)
+                },
+                respondWithMissingParameter(parameterName) {
+                    next(MISSING_PARAM_ERROR(parameterName))
+                },
+                respondWithLoginAlreadyTaken() {
+                    next(ACCESS_DENIED_ERROR(`This email is already taken`))
+                },
+                respondWithUserSuccessfullyCreated() {
+                    res.status(NO_CONTENT).end()
+                },
+                respondWithError(err) {
+                    next(err)
+                },
+            },
+        }
+    }
+    
+    const loginWithPassword = (req, res, next) => {
+        const { email, password } = req.body
+        
+        return {
+            request: {
+                email,
                 password,
             },
             response: {
@@ -42,42 +74,7 @@ module.exports = (loginLabel = 'email') => {
         }
     }
     
-    const registerAdapter = (req, res, next) => {
-        const {
-            [loginLabel]: login, password, confirm, profile,
-        } = req.body
-        
-        return {
-            request: {
-                login,
-                password,
-                confirm,
-                profile,
-            },
-            response: {
-                respondWithMismatchPassword() {
-                    next(MISMATCH_PASSWORD)
-                },
-                respondWithMissingParameter(parameterName) {
-                    next(MISSING_PARAM_ERROR(parameterName))
-                },
-                respondWithLoginAlreadyTaken() {
-                    next(ACCESS_DENIED_ERROR(`This ${loginLabel} is already taken`))
-                },
-                respondWithUserSuccessfullyCreated() {
-                    req.response = {
-                        status: 204,
-                    }
-                    next()
-                },
-                respondWithError(err) {
-                    next(err)
-                },
-            },
-        }
-    }
-    
-    const verifyAdapter = (req, res, next) => {
+    const verify = (req, res, next) => {
         const { token } = req.body
         
         return {
@@ -104,8 +101,8 @@ module.exports = (loginLabel = 'email') => {
         }
     }
     
-    const forgotAdapter = (req, res, next) => {
-        const { [loginLabel]: login } = req.body
+    const forgot = (req, res, next) => {
+        const { email } = req.body
         
         return {
             request: {
@@ -128,7 +125,7 @@ module.exports = (loginLabel = 'email') => {
         }
     }
     
-    const resetAdapter = (req, res, next) => {
+    const reset = (req, res, next) => {
         const { token, password, confirmPassword } = req.body
         
         return {
@@ -142,7 +139,7 @@ module.exports = (loginLabel = 'email') => {
                     next(MISSING_PARAM_ERROR(parameterName))
                 },
                 respondWithPasswordMismatch() {
-                    next(PASSWORD_MISMATCH)
+                    next(MISMATCH_PASSWORD)
                 },
                 respondWithUserNotFound() {
                     next(NOT_FOUND_ERROR)
@@ -161,10 +158,10 @@ module.exports = (loginLabel = 'email') => {
     }
     
     return {
-        loginWithPassword: loginWithPasswordAdapter,
-        register: registerAdapter,
-        verify: verifyAdapter,
-        forgot: forgotAdapter,
-        reset: resetAdapter,
+        register,
+        loginWithPassword,
+        verify,
+        forgot,
+        reset,
     }
 }

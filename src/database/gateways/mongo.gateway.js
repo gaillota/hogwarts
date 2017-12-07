@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-module.exports = ({ modelName, schema, timestamps }) => {
+module.exports = ({ modelName, schema, timestamps = true }) => {
     const modelSchema = new mongoose.Schema(schema, {
         timestamps,
     })
@@ -13,7 +13,7 @@ module.exports = ({ modelName, schema, timestamps }) => {
      * @param limit
      * @param offset
      * @param fields
-     * @return Promise
+     * @return Promise<Array>
      */
     const list = (query, limit, offset, fields) => {
         const options = {
@@ -28,7 +28,7 @@ module.exports = ({ modelName, schema, timestamps }) => {
      * Count documents
      *
      * @param query
-     * @return Promise
+     * @return Promise<Number>
      */
     const count = (query = {}) => Model.count(query).exec()
     
@@ -44,7 +44,7 @@ module.exports = ({ modelName, schema, timestamps }) => {
      * Fetch a document by ID
      *
      * @param id
-     * @return Promise
+     * @return Promise<Object>
      */
     const findById = id => Model.findById(id).exec()
     
@@ -54,7 +54,7 @@ module.exports = ({ modelName, schema, timestamps }) => {
      * @param id
      * @param updatedFields
      * @param options
-     * @return Promise
+     * @return Promise<Object>
      */
     const update = (id, updatedFields, options = {}) => Model.findByIdAndUpdate(id, updatedFields, {
         new: true,
@@ -66,7 +66,7 @@ module.exports = ({ modelName, schema, timestamps }) => {
      *
      * @param id
      * @param newDocument
-     * @return Promise
+     * @return Promise<Object>
      */
     const replace = (id, newDocument) => update(id, newDocument, {
         overwrite: true,

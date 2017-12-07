@@ -85,7 +85,6 @@ const modelRouting = ({ config }) => {
     
     // Define custom routes before default crud
     custom.forEach((route) => {
-        console.log('custom route', route)
         customRouting(route, router)
     })
     

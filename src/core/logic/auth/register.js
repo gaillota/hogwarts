@@ -7,7 +7,6 @@ const createUser = async ({
                               },
                               data: {
                                   getUserByLogin,
-                                  hashPassword,
                                   registerUser,
                                   persistVerificationTokenFor,
                               },
@@ -15,6 +14,7 @@ const createUser = async ({
                                   sendVerificationToken,
                               },
                               mixins: {
+                                  hashPassword,
                                   generateVerificationToken,
                               },
                               response: {

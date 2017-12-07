@@ -8,7 +8,7 @@ module.exports = ({ config, router }) => {
         models = {},
     } = config
     
-    // setupAuth(config, router)
+    setupAuth({ config, router })
     _forEach(models, (modelConfig) => {
         const modelRouter = modelRouting(modelConfig)
         

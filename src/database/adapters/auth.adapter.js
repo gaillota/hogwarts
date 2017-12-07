@@ -1,12 +1,26 @@
 module.exports = (manager, loginLabel) => {
-    const loginWithPassword = () => ({
+    const register = () => ({
         data: {
-            getUserWithLogin(login) {
-                return manager.findOneBy({[loginLabel]: login})
+            getUserByLogin(email) {
+                return manager.findOneBy({ email })
+            },
+            registerUser(email, hash) {
+                return manager.createUser(email, hash)
+            },
+            persistVerificationTokenFor(user, token) {
+                return manager.persistVerificationTokenForUser(user, token)
             },
         },
     })
-
+    
+    const loginWithPassword = () => ({
+        data: {
+            getUserWithLogin(login) {
+                return manager.findOneBy({ [loginLabel]: login })
+            },
+        },
+    })
+    
     const loginWithToken = () => ({
         data: {
             getUserWithToken(id) {
@@ -14,37 +28,7 @@ module.exports = (manager, loginLabel) => {
             },
         },
     })
-
-    const register = () => ({
-        data: {
-            getUserByLogin(login) {
-                return manager.findOneBy({[loginLabel]: login})
-            },
-            hashPassword(password) {
-                return manager.hashPassword(password)
-            },
-            registerUser(login, hash, profile) {
-                const newUser = {
-                    [loginLabel]: login,
-                    password: hash,
-                    profile,
-                    createdAt: new Date(),
-                }
-
-                return manager.createUser(newUser)
-            },
-            persistVerificationTokenFor(user, token) {
-                // TODO: Does not work
-                const verifyToken = {
-                    token,
-                    when: new Date(),
-                }
-
-                return manager.persistVerificationTokenForUser(user, verifyToken)
-            },
-        },
-    })
-
+    
     const verify = () => ({
         data: {
             findUserWithToken(token) {
@@ -55,11 +39,11 @@ module.exports = (manager, loginLabel) => {
             },
         },
     })
-
+    
     const forgot = () => ({
         data: {
             findUserWithLogin(login) {
-                return manager.findOneBy({[loginLabel]: login})
+                return manager.findOneBy({ [loginLabel]: login })
             },
             persistTokenForUser(user, token) {
                 return manager.replace(manager.getId(user), {
@@ -68,7 +52,7 @@ module.exports = (manager, loginLabel) => {
             },
         },
     })
-
+    
     const reset = () => ({
         data: {
             findUserWithToken(token) {
@@ -86,11 +70,11 @@ module.exports = (manager, loginLabel) => {
             },
         },
     })
-
+    
     return {
+        register,
         loginWithPassword,
         loginWithToken,
-        register,
         verify,
         forgot,
         reset,

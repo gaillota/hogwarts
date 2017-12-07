@@ -6,11 +6,14 @@ const { HTTP_METHODS, CRUD_METHODS } = hogwarts
 const env = process.env.NODE_ENV || 'development'
 const port = process.env.PORT || 3000
 
-const appConfig = {
+const config = {
     port,
     endpoint: '/api',
     mimeTypes: ['application/json', 'application/x-www-form-urlencoded', 'multipart/form-data'],
-    roles: ['ADMIN', 'SUPER_ADMIN'], // Default
+    users: {
+        roles: ['USER', 'ADMIN'], // Default
+        defaultRole: 'USER',
+    },
     secret: 'DumbledoreIsDead',
     middlewares: [
         (req, res, next) => {
@@ -81,7 +84,7 @@ const articlesConfig = {
 
 const app = hogwarts()
 
-app.configure(appConfig)
+app.configure(config)
 app.registerModel(articlesConfig)
 
 mongoose.connect()
