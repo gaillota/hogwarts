@@ -29,8 +29,8 @@ module.exports = (manager) => {
     
     const update = () => ({
         data: {
-            updateDocumentWithId(id, doc) {
-                return manager.update(id, doc)
+            updateDocumentWithId(id, updatedFields) {
+                return manager.update(id, updatedFields)
             },
         },
     })

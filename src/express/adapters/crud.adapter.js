@@ -16,17 +16,7 @@ module.exports = (modelName) => {
             page: req.query.page,
         },
         response: {
-            respondWithNoDocuments() {
-                res.json({
-                    data: {
-                        [modelName]: [],
-                    },
-                    count: 0,
-                    offset: 0,
-                    total: 0,
-                })
-            },
-            respondWithFoundDocuments({
+            respondWithData({
                                           documents,
                                           count,
                                           offset,
