@@ -5,13 +5,12 @@ const setPassport = require('../../passport/config')
 
 module.exports = (appConfig, appRouter) => {
     const {
-        loginLabel,
         secret,
         userSchema
     } = appConfig
     const gateway = new Gateway('users', userSchema)
     const manager = new UserManager(gateway)
-    const controller = new AuthController(loginLabel, secret, manager)
+    const controller = new AuthController(secret, manager)
 
     setPassport(secret, controller.loginWithToken)
 

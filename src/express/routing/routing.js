@@ -1,6 +1,6 @@
 const _forEach = require('lodash/forEach')
 
-const authRouting = require('./auth.routing')
+const setupAuth = require('./auth.routing')
 const modelRouting = require('./model.routing')
 
 module.exports = ({ config, router }) => {
@@ -8,9 +8,10 @@ module.exports = ({ config, router }) => {
         models = {},
     } = config
     
-    // authRouting(appConfig, appRouter)
-    _forEach(models, ({ endpoint, ...modelConfig }) => {
-        const modelRouter = modelRouting({ config: modelConfig })
-        router.use(endpoint, modelRouter)
+    // setupAuth(config, router)
+    _forEach(models, (modelConfig) => {
+        const modelRouter = modelRouting(modelConfig)
+        
+        router.use(modelRouter)
     })
 }

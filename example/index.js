@@ -43,26 +43,10 @@ const articlesConfig = {
         }
     },
     timestamps: true,
-    crud: {
-        [CRUD_METHODS.PAGINATE]: {
-            anonymous: true,
-            roles: 'ADMIN',
-            middlewares: [],
-            action: (req, res, next) => {
-                console.log('Custom crud action: paginate')
-                next()
-            }
-        },
-        [CRUD_METHODS.REMOVE]: {
-            disabled: true,
-        },
-    },
     
     disabled: true,
     
     anonymous: true,
-    
-    roles: 'String || Function|| Array',
     
     middlewares: [
         (req, res, next) => {

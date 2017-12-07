@@ -8,7 +8,7 @@ const isGranted = require('../middlewares/roles-guard.middleware')
 const crudController = require('../controllers/crud.controller')
 const { MongoGateway } = require('../../database/gateways')
 
-const defaultCrud = ({ config, router }) => {
+const crudRouting = ({ config, router }) => {
     const {
         name,
         schema,
@@ -30,7 +30,7 @@ const defaultCrud = ({ config, router }) => {
         .delete(controller.remove)
 }
 
-const customRoute = (route, router) => {
+const customRouting = (route, router) => {
     const {
         endpoint,
         method,
@@ -62,7 +62,7 @@ const customRoute = (route, router) => {
     router.route(endpoint)[method.toLowerCase()](routeMiddlewares, action)
 }
 
-module.exports = ({ config }) => {
+const modelRouting = ({ config }) => {
     const router = express.Router()
     const {
         disabled,
@@ -86,12 +86,21 @@ module.exports = ({ config }) => {
     // Define custom routes before default crud
     custom.forEach((route) => {
         console.log('custom route', route)
-        customRoute(route, router)
+        customRouting(route, router)
     })
     
     if (!disabled) {
-        defaultCrud({ config, router })
+        crudRouting({ config, router })
     }
+    
+    return router
+}
+
+module.exports = ({ endpoint, ...config }) => {
+    const router = express.Router()
+    const modelRouter = modelRouting({ config })
+    
+    router.use(endpoint, modelRouter)
     
     return router
 }
