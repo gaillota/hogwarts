@@ -28,7 +28,7 @@ const defaultCrud = ({ config, router }) => {
     router.route('/:id')
         .get(controller.one)
         .patch(controller.update)
-        // .put(controller.replace)
+        .put(controller.replace)
         .delete(controller.remove)
 }
 

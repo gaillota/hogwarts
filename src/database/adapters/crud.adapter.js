@@ -36,7 +36,11 @@ module.exports = (manager) => {
     })
     
     const replace = () => ({
-        data: {},
+        data: {
+            updateDocumentWithId(id, newDocument) {
+                return manager.replace(id, newDocument)
+            },
+        },
     })
     
     const remove = () => ({

@@ -64,7 +64,11 @@ module.exports = (modelName, manager) => {
         const { request, response } = expressAdapter.replace(req, res, next)
         const { data } = databaseAdapter.replace()
         
-        
+        updateDocument({
+            request,
+            response,
+            data,
+        })
     }
     
     function remove(req, res, next) {

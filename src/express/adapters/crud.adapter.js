@@ -107,9 +107,7 @@ module.exports = (modelName) => {
     })
     
     // PUT /:modelName/:id
-    const replace = (req, res, next) => ({
-        request: {},
-    })
+    const replace = (req, res, next) => update(req, res, next)
     
     // DELETE /:modelName/:id
     const remove = (req, res, next) => ({

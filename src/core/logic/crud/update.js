@@ -22,7 +22,6 @@ const updateDocument = async ({
         }
         
         const result = await updateDocumentWithId(documentId, updatedFields)
-        console.log('result:', result)
         respondWithResult(result)
     } catch (err) {
         respondWithError(err)
