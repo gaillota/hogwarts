@@ -1,6 +1,5 @@
-/* eslint-disable no-param-reassign */
+/* eslint-disable no-param-reassign,no-unused-vars */
 module.exports = (err, req, res, next) => {
-    console.error('An error occured:', err)
     if (typeof err === 'string') {
         err = {
             message: err

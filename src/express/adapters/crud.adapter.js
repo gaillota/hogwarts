@@ -43,6 +43,9 @@ module.exports = (modelName) => {
             document: req.body,
         },
         response: {
+            respondWithNoDocument() {
+                next(EMPTY_BODY)
+            },
             respondWithSuccess() {
                 res.status(NO_CONTENT).end()
             },

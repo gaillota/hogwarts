@@ -30,6 +30,8 @@ module.exports.ACCESS_DENIED_ERROR = (message = 'Access denied') => ({
     message
 })
 
+module.exports.ANONYMOUS_ERROR = module.exports.ACCESS_DENIED_ERROR('This resource needs authentication')
+
 module.exports.NOT_FOUND_ERROR = {
     status: 404,
     message: 'Content not found',

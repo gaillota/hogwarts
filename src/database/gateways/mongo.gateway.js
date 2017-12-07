@@ -25,6 +25,14 @@ module.exports = ({ modelName, schema, timestamps }) => {
     }
     
     /**
+     * Count documents
+     *
+     * @param query
+     * @return Promise
+     */
+    const count = (query = {}) => Model.count(query).exec()
+    
+    /**
      * Create new document
      *
      * @param newDocument
@@ -73,21 +81,13 @@ module.exports = ({ modelName, schema, timestamps }) => {
      */
     const remove = id => Model.findByIdAndRemove(id).exec()
     
-    /**
-     * Count documents
-     *
-     * @param query
-     * @return Promise
-     */
-    const count = (query = {}) => Model.count(query).exec()
-    
     return {
         list,
+        count,
         create,
         findById,
         update,
         replace,
         remove,
-        count,
     }
 }

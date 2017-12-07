@@ -1,3 +1,5 @@
+const { ANONYMOUS_ERROR } = require('../../utils/errors')
+
 const hasRoles = (roles, userRoles) => roles.every(role => userRoles.includes(role))
 
 module.exports = (roles = []) => {
@@ -14,7 +16,7 @@ module.exports = (roles = []) => {
         
         const { user } = req
         if (!user) {
-            return next(new Error('Not authenticated'))
+            return next(ANONYMOUS_ERROR)
         }
         
         const { roles: userRoles } = user

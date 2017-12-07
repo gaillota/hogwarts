@@ -6,11 +6,15 @@ const insertDocument = async ({
                                       persistDocument,
                                   },
                                   response: {
+                                      respondWithNoDocument,
                                       respondWithSuccess,
                                       respondWithError,
                                   },
                               }) => {
     try {
+        if (!document || !Object.keys(document).length) {
+            return respondWithNoDocument()
+        }
         await persistDocument(document)
         respondWithSuccess()
     } catch (err) {

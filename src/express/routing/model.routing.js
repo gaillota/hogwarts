@@ -16,8 +16,6 @@ const defaultCrud = ({ config, router }) => {
     } = config
     // Gateway passed via config (or default)
     const gateway = MongoGateway({ modelName: name, schema, timestamps })
-    // // Abstraction class using above gateway to provide classic crud functions
-    // const manager = new DocumentManager(mongoGateway)
     // Controller used for crud middlewares
     const controller = crudController(name, gateway)
     
@@ -61,9 +59,7 @@ const customRoute = (route, router) => {
         routeMiddlewares.push(...middlewares)
     }
     
-    routeMiddlewares.push(action)
-    
-    router.route(endpoint)[method.toLowerCase()](...routeMiddlewares)
+    router.route(endpoint)[method.toLowerCase()](routeMiddlewares, action)
 }
 
 module.exports = ({ config }) => {
@@ -84,22 +80,12 @@ module.exports = ({ config }) => {
     }
     
     if (_isArray(middlewares) && middlewares.length) {
-        router.use(...middlewares)
+        router.use(middlewares)
     }
-    
-    // Disable default crud if crud is specified
-    // if (crud) {
-    //     disabled = true
-    //     _forEach(crud, (crudConfig, method) => {
-    //         customRoute({
-    //             ...crudConfig,
-    //             endpoint: mapMethodToEndpoint(method)
-    //         }, router)
-    //     })
-    // }
     
     // Define custom routes before default crud
     custom.forEach((route) => {
+        console.log('custom route', route)
         customRoute(route, router)
     })
     

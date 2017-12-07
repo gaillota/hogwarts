@@ -58,6 +58,8 @@ const articlesConfig = {
         },
     },
     
+    disabled: true,
+    
     anonymous: true,
     
     roles: 'String || Function|| Array',
@@ -73,9 +75,9 @@ const articlesConfig = {
         {
             endpoint: '/custom',
             method: HTTP_METHODS.GET,
-            anonymous: false, // Default
+            anonymous: true, // Default
             
-            roles: 'String || Function|| Array',
+            // roles: 'String || Function|| Array',
             
             middlewares: [
                 (req, res, next) => {
@@ -85,7 +87,9 @@ const articlesConfig = {
             ],
             action: (req, res, next) => {
                 console.log('Article custom method action')
-                next()
+                res.json({
+                    data: 'Custom action for article model'
+                })
             },
         },
     ],
