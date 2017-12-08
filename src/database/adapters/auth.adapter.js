@@ -21,6 +21,9 @@ module.exports = (manager, loginLabel) => {
             activateUser(user) {
                 return manager.verifyUser(user)
             },
+            removeVerificationToken(user) {
+                return manager.removeVerificationToken(user)
+            }
         },
     })
     

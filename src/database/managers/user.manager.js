@@ -28,10 +28,16 @@ module.exports = ({ gateway }) => {
         return findOneBy({ verification_token: token })
     }
     
-    // Do not unset verifyToken in case verifyUser gets called several times
+    // Do not unset verify_token in case verifyUser gets called several times
     function verifyUser(user) {
         return gateway.update(getId(user), {
             verified: true,
+        })
+    }
+    
+    function removeVerificationToken(user) {
+        return gateway.update(getId(user), {
+            verification_token: ''
         })
     }
     
@@ -70,6 +76,7 @@ module.exports = ({ gateway }) => {
         persistVerificationTokenForUser,
         findOneByVerificationToken,
         verifyUser,
+        removeVerificationToken,
         checkPassword,
         persistToken,
         findOneByResetToken,

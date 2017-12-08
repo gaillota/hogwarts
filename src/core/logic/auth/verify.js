@@ -5,6 +5,7 @@ async function verifyUser({
                               data: {
                                   findUserWithToken,
                                   activateUser,
+                                  removeVerificationToken,
                               },
                               mixins: {
                                   isUserVerified,
@@ -32,6 +33,7 @@ async function verifyUser({
         }
         
         const result = await activateUser(user)
+        await removeVerificationToken(user)
         respondWithResult(result)
     } catch (err) {
         respondWithError(err)
