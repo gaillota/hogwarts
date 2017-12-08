@@ -105,6 +105,22 @@ module.exports = ({ secret, manager }) => {
         })
     }
     
+    function reset(req, res, next) {
+        const { request, response } = expressAdapter.reset(req, res, next)
+        const { data } = databaseAdapter.reset()
+        
+        resetPassword({
+            request,
+            response,
+            data,
+            mixins: {
+                hashPassword(password) {
+                    return bcrypt.hashPassword(password)
+                }
+            }
+        })
+    }
+    
     function loginWithToken(req, res, next) {
         const { request, response } = jwtAdapter.loginWithToken(req, res, next)
         const { data } = databaseAdapter.loginWithPassword()
@@ -116,17 +132,6 @@ module.exports = ({ secret, manager }) => {
             mixins: {
                 isUserDisabled: user => user.disabled,
             },
-        })
-    }
-    
-    function reset(req, res, next) {
-        const { request, response } = expressAdapter.reset(req, res, next)
-        const { data } = databaseAdapter.reset()
-        
-        resetPassword({
-            request,
-            response,
-            data,
         })
     }
     

@@ -2,37 +2,43 @@ async function resetPassword({
                                  request: {
                                      token,
                                      password,
-                                     confirmPassword,
+                                     confirm,
                                  },
                                  data: {
                                      findUserWithToken,
+                                     updatePassword,
+                                     removeResetToken,
+                                 },
+                                 mixins: {
                                      hashPassword,
-                                     updatePasswordForUser,
                                  },
                                  response: {
                                      respondWithMissingParameter,
                                      respondWithPasswordMismatch,
                                      respondWithUserNotFound,
-                                     respondWithResult,
+                                     respondWithSuccess,
                                      respondWithError,
                                  },
                              }) {
     try {
-        if (!token || !password || !confirmPassword)
-            return respondWithMissingParameter(!token && 'token' || !password && 'password' || !confirmPassword && 'confirmPassword')
+        if (!token || !password || !confirm) {
+            return respondWithMissingParameter(!token && 'token' || !password && 'password' || !confirm && 'confirm')
+        }
         
-        if (password !== confirmPassword)
+        if (password !== confirm) {
             return respondWithPasswordMismatch()
+        }
         
         const user = await findUserWithToken(token)
         
-        if (!user)
+        if (!user) {
             return respondWithUserNotFound()
+        }
         
         const hash = await hashPassword(password)
-        const result = await updatePasswordForUser(user, hash)
+        await Promise.all([updatePassword(user, hash), removeResetToken(user)])
         
-        respondWithResult(result)
+        respondWithSuccess()
     } catch (err) {
         respondWithError(err)
     }

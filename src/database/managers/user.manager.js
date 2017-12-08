@@ -24,7 +24,7 @@ module.exports = ({ gateway }) => {
         })
     }
     
-    function findOneByToken(token) {
+    function findOneByVerificationToken(token) {
         return findOneBy({ verification_token: token })
     }
     
@@ -45,14 +45,35 @@ module.exports = ({ gateway }) => {
         })
     }
     
+    function findOneByResetToken(token) {
+        return findOneBy({
+            reset_token: token
+        })
+    }
+    
+    function updatePassword(user, password) {
+        return gateway.update(getId(user), {
+            password
+        })
+    }
+    
+    function removeResetToken(user) {
+        return gateway.update(getId(user), {
+            reset_token: ""
+        })
+    }
+    
     return {
         getId,
         findOneBy,
         createUser,
         persistVerificationTokenForUser,
-        findOneByToken,
+        findOneByVerificationToken,
         verifyUser,
         checkPassword,
         persistToken,
+        findOneByResetToken,
+        updatePassword,
+        removeResetToken
     }
 }

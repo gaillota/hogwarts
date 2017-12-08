@@ -74,7 +74,7 @@ module.exports = () => {
         const { email, password } = req.body
         const parameterLabels = {
             login: 'email',
-            password: 'password'
+            password: 'password',
         }
         
         return {
@@ -101,8 +101,8 @@ module.exports = () => {
                 respondWithUserToken(token) {
                     res.json({
                         data: {
-                            token
-                        }
+                            token,
+                        },
                     })
                 },
                 respondWithError(err) {
@@ -143,13 +143,14 @@ module.exports = () => {
     }
     
     const reset = (req, res, next) => {
-        const { token, password, confirmPassword } = req.body
+        const { token } = req.params
+        const { password, confirm } = req.body
         
         return {
             request: {
                 token,
                 password,
-                confirmPassword,
+                confirm,
             },
             response: {
                 respondWithMissingParameter(parameterName) {
@@ -159,13 +160,10 @@ module.exports = () => {
                     next(MISMATCH_PASSWORD)
                 },
                 respondWithUserNotFound() {
-                    next(NOT_FOUND_ERROR)
+                    next(USER_NOT_FOUND)
                 },
-                respondWithResult(result) {
-                    req.response = {
-                        result,
-                    }
-                    next()
+                respondWithSuccess() {
+                    res.status(NO_CONTENT).end()
                 },
                 respondWithError(err) {
                     next(err)

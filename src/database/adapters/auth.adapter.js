@@ -16,7 +16,7 @@ module.exports = (manager, loginLabel) => {
     const verify = () => ({
         data: {
             findUserWithToken(token) {
-                return manager.findOneByToken(token)
+                return manager.findOneByVerificationToken(token)
             },
             activateUser(user) {
                 return manager.verifyUser(user)
@@ -43,28 +43,24 @@ module.exports = (manager, loginLabel) => {
         },
     })
     
+    const reset = () => ({
+        data: {
+            findUserWithToken(token) {
+                return manager.findOneByResetToken(token)
+            },
+            updatePassword(user, password) {
+                return manager.updatePassword(user, password)
+            },
+            removeResetToken(user) {
+                return manager.removeResetToken(user)
+            }
+        },
+    })
+    
     const loginWithToken = () => ({
         data: {
             getUserWithToken(id) {
                 return manager.findOneById(id)
-            },
-        },
-    })
-    
-    const reset = () => ({
-        data: {
-            findUserWithToken(token) {
-                return manager.findOneBy({
-                    resetToken: token,
-                })
-            },
-            hashPassword(password) {
-                return manager.hashPassword(password)
-            },
-            updatePasswordForUser(user, password) {
-                return manager.replace(manager.getId(user), {
-                    password,
-                })
             },
         },
     })

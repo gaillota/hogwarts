@@ -24,5 +24,5 @@ module.exports = ({ config, router }) => {
     router.post('/verify', controller.verify)
     router.post('/login', controller.loginWithPassword)
     router.post('/forgot', controller.forgot)
-    // router.post('/reset', controller.reset)
+    router.post('/reset/:token', controller.reset)
 }
