@@ -82,20 +82,6 @@ module.exports = ({ secret, manager }) => {
         })
     }
     
-    function loginWithToken(req, res, next) {
-        const { request, response } = jwtAdapter.loginWithToken(req, res, next)
-        const { data } = databaseAdapter.loginWithPassword()
-        
-        authenticateUserWithToken({
-            request,
-            response,
-            data,
-            mixins: {
-                isUserDisabled: user => user.disabled,
-            },
-        })
-    }
-    
     function forgot(req, res, next) {
         const { request, response } = expressAdapter.forgot(req, res, next)
         const { data } = databaseAdapter.forgot()
@@ -115,6 +101,20 @@ module.exports = ({ secret, manager }) => {
                         console.log('Send reset token via some channel:', token)
                     })
                 },
+            },
+        })
+    }
+    
+    function loginWithToken(req, res, next) {
+        const { request, response } = jwtAdapter.loginWithToken(req, res, next)
+        const { data } = databaseAdapter.loginWithPassword()
+        
+        authenticateUserWithToken({
+            request,
+            response,
+            data,
+            mixins: {
+                isUserDisabled: user => user.disabled,
             },
         })
     }

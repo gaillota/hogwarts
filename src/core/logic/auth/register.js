@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-operators */
-const createUser = async ({
+async function createUser({
                               request: {
                                   email,
                                   password,
@@ -24,7 +24,7 @@ const createUser = async ({
                                   respondWithUserSuccessfullyCreated,
                                   respondWithError,
                               },
-                          }) => {
+                          }) {
     try {
         if (!email || !password || !confirm) {
             return respondWithMissingParameter(!email && 'email' || !password && 'password' || !confirm && 'confirm password')
@@ -45,7 +45,7 @@ const createUser = async ({
         const newUser = await registerUser(email, hash)
         await Promise.all([
             persistVerificationTokenFor(newUser, token),
-            sendVerificationToken(token)
+            sendVerificationToken(token),
         ])
         
         respondWithUserSuccessfullyCreated()

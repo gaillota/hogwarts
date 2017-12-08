@@ -30,7 +30,7 @@ const getSchema = ({ roles, defaultRole }) => ({
 })
 
 const tokens = [
-    '078a1bc3c6a21a0b0aa38a1d2da962bd9b6cdbed0f1b7a53832423dffc41daefafd3ffa69289688e271c16f67ec257af2d162e5f98beec19fef1e67553077c2e' // manzagregine+test@gmail.com
+    'f5a4bf6180398d7d6f801b2450c18dd5af887d039c6e80e8bfb5e0eb09991acba85b7d1afeaa094a931894102e91bf5d0adeba43e89df00e51e9d6e6d9322bc2'
 ]
 
 module.exports = ({ roles, defaultRole, userSchema }) => ({

@@ -35,6 +35,11 @@ module.exports.MISMATCH_PASSWORD = {
     message: 'The passwords does not match',
 }
 
+module.exports.TOKEN_GENERATION_ERROR = {
+    status: 500,
+    message: 'An error occurred while generating reset token'
+}
+
 module.exports.ACCESS_DENIED_ERROR = (message = 'Access denied') => ({
     status: 403,
     message

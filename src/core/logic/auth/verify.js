@@ -1,4 +1,4 @@
-const verifyUser = async ({
+async function verifyUser({
                               request: {
                                   token,
                               },
@@ -16,7 +16,7 @@ const verifyUser = async ({
                                   respondWithResult,
                                   respondWithError,
                               },
-                          }) => {
+                          }) {
     try {
         if (!token) {
             return respondWithEmptyToken()

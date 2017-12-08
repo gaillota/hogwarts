@@ -23,6 +23,6 @@ module.exports = ({ config, router }) => {
     router.get('/verify/:token', controller.verify)
     router.post('/verify', controller.verify)
     router.post('/login', controller.loginWithPassword)
-    // router.post('/forgot', controller.forgot)
+    router.post('/forgot', controller.forgot)
     // router.post('/reset', controller.reset)
 }

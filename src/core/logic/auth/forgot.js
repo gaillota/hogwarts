@@ -1,10 +1,10 @@
-const forgotPassword = async ({
+async function forgotPassword({
                                   request: {
                                       login,
                                   },
                                   data: {
                                       findUserWithLogin,
-                                      persistTokenForUser,
+                                      persistToken,
                                   },
                                   mixins: {
                                       generateToken,
@@ -17,24 +17,32 @@ const forgotPassword = async ({
                                       respondWithUserNotFound,
                                       respondWithTokenError,
                                       respondWithSuccess,
+                                      respondWithError,
                                   },
-                              }) => {
-    if (!login)
-        return respondWithMissingParameter('login')
-
-    const user = await findUserWithLogin(login)
-
-    if (!user)
-        return respondWithUserNotFound()
-    
-    // Await in case the token generation needs I/O operation someday
-    const token = await generateToken()
-
-    if (!token)
-        return respondWithTokenError()
-
-    await [persistTokenForUser(user, token), sendToken(token)]
-    respondWithSuccess()
+                              }) {
+    try {
+        if (!login) {
+            return respondWithMissingParameter('login')
+        }
+        
+        const user = await findUserWithLogin(login)
+        
+        if (!user) {
+            return respondWithUserNotFound()
+        }
+        
+        // Await in case the token generation needs I/O operation someday
+        const token = await generateToken()
+        
+        if (!token) {
+            return respondWithTokenError()
+        }
+        
+        await Promise.all([persistToken(user, token), sendToken(token)])
+        respondWithSuccess()
+    } catch (err) {
+        respondWithError(err)
+    }
 }
 
 module.exports = forgotPassword

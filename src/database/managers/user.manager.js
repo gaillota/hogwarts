@@ -39,36 +39,11 @@ module.exports = ({ gateway }) => {
         return bcrypt.checkPassword(password, user.password)
     }
     
-    
-    // findOneById(id) {
-    //     return this.findOneBy({ _id: id })
-    // }
-    //
-    // findOneBy(criteria) {
-    //     return this.list(criteria).then((data) => {
-    //         if (data.length && data.length > 1) {
-    //             throw new Error('Query has more than 1 result')
-    //         }
-    //
-    //         return data[0]
-    //     })
-    // }
-    //
-    // findBy(criteria) {
-    //     return this.gateway.list(criteria)
-    // }
-    //
-    // update(id, props) {
-    //     console.log(props)
-    //     // TODO: Update with a mergeDeep
-    //     return this.findOneById(id).then((user) => {
-    //         console.log('user:', user.toObject())
-    //         return this.gateway.replace(id, {
-    //             ...user,
-    //             ...props
-    //         })
-    //     },)
-    // }
+    function persistToken(user, token) {
+        return gateway.update(getId(user), {
+            reset_token: token,
+        })
+    }
     
     return {
         getId,
@@ -78,5 +53,6 @@ module.exports = ({ gateway }) => {
         findOneByToken,
         verifyUser,
         checkPassword,
+        persistToken,
     }
 }

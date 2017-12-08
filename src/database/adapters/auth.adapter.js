@@ -32,23 +32,21 @@ module.exports = (manager, loginLabel) => {
         },
     })
     
-    const loginWithToken = () => ({
+    const forgot = () => ({
         data: {
-            getUserWithToken(id) {
-                return manager.findOneById(id)
+            findUserWithLogin(login) {
+                return manager.findOneBy({ email: login })
+            },
+            persistToken(user, token) {
+                return manager.persistToken(user, token)
             },
         },
     })
     
-    const forgot = () => ({
+    const loginWithToken = () => ({
         data: {
-            findUserWithLogin(login) {
-                return manager.findOneBy({ [loginLabel]: login })
-            },
-            persistTokenForUser(user, token) {
-                return manager.replace(manager.getId(user), {
-                    resetToken: token,
-                })
+            getUserWithToken(id) {
+                return manager.findOneById(id)
             },
         },
     })

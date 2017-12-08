@@ -7,7 +7,8 @@ const {
     ACCESS_DENIED_ERROR,
     USER_NOT_FOUND,
     USER_NOT_VERIFIED,
-    USER_ALREADY_VERIFIED
+    USER_ALREADY_VERIFIED,
+    TOKEN_GENERATION_ERROR,
 } = require('../../utils/errors')
 
 module.exports = () => {
@@ -113,6 +114,9 @@ module.exports = () => {
     
     const forgot = (req, res, next) => {
         const { email } = req.body
+        const parameterLabels = {
+            login: 'email',
+        }
         
         return {
             request: {
@@ -120,13 +124,16 @@ module.exports = () => {
             },
             response: {
                 respondWithMissingParameter(parameterName) {
-                    next(MISSING_PARAM_ERROR(parameterName))
+                    next(MISSING_PARAM_ERROR(parameterLabels[parameterName]))
                 },
-                responseWithUserNotFound() {
+                respondWithUserNotFound() {
                     next(USER_NOT_FOUND)
                 },
+                respondWithTokenError() {
+                    next(TOKEN_GENERATION_ERROR)
+                },
                 respondWithSuccess() {
-                    next()
+                    res.status(NO_CONTENT).end()
                 },
                 respondWithError(err) {
                     next(err)
