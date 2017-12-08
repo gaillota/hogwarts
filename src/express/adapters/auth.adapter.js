@@ -99,7 +99,9 @@ module.exports = () => {
                 },
                 respondWithUserToken(token) {
                     res.json({
-                        data: token
+                        data: {
+                            token
+                        }
                     })
                 },
                 respondWithError(err) {

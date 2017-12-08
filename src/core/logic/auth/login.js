@@ -36,9 +36,9 @@ async function authenticateUserWithPassword({
             return respondWithUserDisabled()
         }
         
-        // if (isUserNotVerified(user)) {
-        //     return respondWithUserNotVerified()
-        // }
+        if (isUserNotVerified(user)) {
+            return respondWithUserNotVerified()
+        }
         
         if (!verifyPassword(password, user)) {
             return respondWithWrongPassword()
