@@ -6,6 +6,8 @@ const {
     WRONG_PASSWORD_ERROR,
     ACCESS_DENIED_ERROR,
     USER_NOT_FOUND,
+    USER_NOT_VERIFIED,
+    USER_ALREADY_VERIFIED
 } = require('../../utils/errors')
 
 module.exports = () => {
@@ -40,46 +42,10 @@ module.exports = () => {
         }
     }
     
-    const loginWithPassword = (req, res, next) => {
-        const { email, password } = req.body
-        
+    function verify(req, res, next) {
         return {
             request: {
-                email,
-                password,
-            },
-            response: {
-                respondWithMissingParameter(parameterName) {
-                    next(MISSING_PARAM_ERROR(parameterName))
-                },
-                respondWithUserDisabled() {
-                    next(ACCESS_DENIED_ERROR('User has been disabled'))
-                },
-                respondWithUserNotFound() {
-                    next(NOT_FOUND_ERROR)
-                },
-                respondWithWrongPassword() {
-                    next(WRONG_PASSWORD_ERROR)
-                },
-                respondWithUserToken(token) {
-                    req.response = {
-                        token,
-                    }
-                    next()
-                },
-                respondWithError(err) {
-                    next(err)
-                },
-            },
-        }
-    }
-    
-    const verify = (req, res, next) => {
-        const { token } = req.body
-        
-        return {
-            request: {
-                token,
+                token: req.params.token || req.body.token,
             },
             response: {
                 respondWithEmptyToken() {
@@ -88,11 +54,53 @@ module.exports = () => {
                 responseWithUserNotFound() {
                     next(USER_NOT_FOUND)
                 },
+                respondWithUserAlreadyVerified() {
+                    next(USER_ALREADY_VERIFIED)
+                },
                 respondWithResult(result) {
-                    req.response = {
-                        result,
-                    }
-                    next()
+                    res.json({
+                        data: result,
+                    })
+                },
+                respondWithError(err) {
+                    next(err)
+                },
+            },
+        }
+    }
+    
+    const loginWithPassword = (req, res, next) => {
+        const { email, password } = req.body
+        const parameterLabels = {
+            login: 'email',
+            password: 'password'
+        }
+        
+        return {
+            request: {
+                login: email,
+                password,
+            },
+            response: {
+                respondWithMissingParameter(parameterName) {
+                    next(MISSING_PARAM_ERROR(parameterLabels[parameterName]))
+                },
+                respondWithUserNotFound() {
+                    next(USER_NOT_FOUND)
+                },
+                respondWithUserDisabled() {
+                    next(ACCESS_DENIED_ERROR('Sorry, your account has been disabled'))
+                },
+                respondWithWrongPassword() {
+                    next(WRONG_PASSWORD_ERROR)
+                },
+                respondWithUserNotVerified() {
+                    next(USER_NOT_VERIFIED)
+                },
+                respondWithUserToken(token) {
+                    res.json({
+                        data: token
+                    })
                 },
                 respondWithError(err) {
                     next(err)
@@ -106,7 +114,7 @@ module.exports = () => {
         
         return {
             request: {
-                login,
+                login: email,
             },
             response: {
                 respondWithMissingParameter(parameterName) {
@@ -159,8 +167,8 @@ module.exports = () => {
     
     return {
         register,
-        loginWithPassword,
         verify,
+        loginWithPassword,
         forgot,
         reset,
     }

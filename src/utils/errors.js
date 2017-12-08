@@ -15,6 +15,16 @@ module.exports.USER_NOT_FOUND = {
     message: 'User not found',
 }
 
+module.exports.USER_NOT_VERIFIED = {
+    status: 403,
+    message: 'Please activate your account to be able to login'
+}
+
+module.exports.USER_ALREADY_VERIFIED = {
+    status: 403,
+    message: 'Your account is already verified'
+}
+
 module.exports.WRONG_PASSWORD_ERROR = {
     status: 400,
     message: 'Wrong password',

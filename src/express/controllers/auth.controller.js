@@ -19,7 +19,7 @@ module.exports = ({ secret, manager }) => {
     // Adapters
     const expressAdapter = getExpressAdapter()
     const databaseAdapter = getDatabaseAdapter(manager)
-    const jwtAdapter = getJwtAdapter(secret)
+    const jwtAdapter = getJwtAdapter(secret, manager)
     
     function register(req, res, next) {
         const { request, response } = expressAdapter.register(req, res, next)
@@ -47,22 +47,37 @@ module.exports = ({ secret, manager }) => {
         })
     }
     
+    function verify(req, res, next) {
+        const { request, response } = expressAdapter.verify(req, res, next)
+        const { data } = databaseAdapter.verify()
+        
+        verifyUser({
+            request,
+            response,
+            mixins: {
+                isUserVerified: user => user.verified,
+            },
+            data,
+        })
+    }
+    
     function loginWithPassword(req, res, next) {
         const { request, response } = expressAdapter.loginWithPassword(req, res, next)
-        const { data: { getUserWithLogin } } = databaseAdapter.loginWithPassword()
+        const { data } = databaseAdapter.loginWithPassword()
         const { generateToken } = jwtAdapter.loginWithPassword()
         
         authenticateUserWithPassword({
             request,
             response,
             data: {
-                getUserWithLogin,
+                ...data,
                 generateToken,
             },
             // TODO: Move to dedicated mixins adapter
             mixins: {
-                verifyPassword: (user, password) => manager.verifyUser(user, password),
+                verifyPassword: (password, user) => manager.checkPassword(password, user),
                 isUserDisabled: user => user.disabled,
+                isUserNotVerified: user => !user.verified,
             },
         })
     }
@@ -78,17 +93,6 @@ module.exports = ({ secret, manager }) => {
             mixins: {
                 isUserDisabled: user => user.disabled,
             },
-        })
-    }
-    
-    function verify(req, res, next) {
-        const { request, response } = expressAdapter.verify(req, res, next)
-        const { data } = databaseAdapter.verify()
-        
-        verifyUser({
-            request,
-            response,
-            data,
         })
     }
     
@@ -132,6 +136,6 @@ module.exports = ({ secret, manager }) => {
         loginWithPassword,
         loginWithToken,
         forgot,
-        reset
+        reset,
     }
 }

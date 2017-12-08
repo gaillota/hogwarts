@@ -1,39 +1,49 @@
-const authenticateUserWithPassword = async ({
-                                                       request: {
-                                                           login,
-                                                           password,
-                                                       },
-                                                       data: {
-                                                           getUserWithLogin,
-                                                           generateToken,
-                                                       },
-                                                       mixins: {
-                                                           verifyPassword,
-                                                           isUserDisabled,
-                                                       },
-                                                       response: {
-                                                           respondWithMissingParameter,
-                                                           respondWithUserNotFound,
-                                                           respondWithUserDisabled,
-                                                           respondWithWrongPassword,
-                                                           respondWithUserToken,
-                                                           respondWithError,
-                                                       },
-                                                   }) => {
+async function authenticateUserWithPassword({
+                                                request: {
+                                                    login,
+                                                    password,
+                                                },
+                                                data: {
+                                                    getUserWithLogin,
+                                                    generateToken,
+                                                },
+                                                mixins: {
+                                                    verifyPassword,
+                                                    isUserDisabled,
+                                                    isUserNotVerified,
+                                                },
+                                                response: {
+                                                    respondWithMissingParameter,
+                                                    respondWithUserNotFound,
+                                                    respondWithUserDisabled,
+                                                    respondWithUserNotVerified,
+                                                    respondWithWrongPassword,
+                                                    respondWithUserToken,
+                                                    respondWithError,
+                                                },
+                                            }) {
     try {
-        if (!login || !password)
+        if (!login || !password) {
             return respondWithMissingParameter(!login && 'login' || !password && 'password')
-
+        }
+        
         const user = await getUserWithLogin(login)
-        if (!user)
+        if (!user) {
             return respondWithUserNotFound()
-
-        if (isUserDisabled(user))
+        }
+        
+        if (isUserDisabled(user)) {
             return respondWithUserDisabled()
-
-        if (!verifyPassword(user, password))
+        }
+        
+        // if (isUserNotVerified(user)) {
+        //     return respondWithUserNotVerified()
+        // }
+        
+        if (!verifyPassword(password, user)) {
             return respondWithWrongPassword()
-
+        }
+        
         const token = await generateToken(user)
         respondWithUserToken(token)
     } catch (err) {
@@ -41,36 +51,39 @@ const authenticateUserWithPassword = async ({
     }
 }
 
-const authenticateUserWithToken = async ({
-                                                    request: {
-                                                        token,
-                                                    },
-                                                    data: {
-                                                        getUserWithToken,
-                                                    },
-                                                    mixins: {
-                                                        isUserDisabled,
-                                                    },
-                                                    response: {
-                                                        respondWithTokenMissing,
-                                                        responseWithUserNotFound,
-                                                        respondWithUserDisabled,
-                                                        respondWithAuthenticatedUser,
-                                                        respondWithError,
-                                                    },
-                                                }) => {
+async function authenticateUserWithToken({
+                                             request: {
+                                                 token,
+                                             },
+                                             data: {
+                                                 getUserWithToken,
+                                             },
+                                             mixins: {
+                                                 isUserDisabled,
+                                             },
+                                             response: {
+                                                 respondWithTokenMissing,
+                                                 responseWithUserNotFound,
+                                                 respondWithUserDisabled,
+                                                 respondWithAuthenticatedUser,
+                                                 respondWithError,
+                                             },
+                                         }) {
     try {
-        if (!token)
+        if (!token) {
             return respondWithTokenMissing()
-
+        }
+        
         const user = await getUserWithToken(token)
-
-        if (!user)
+        
+        if (!user) {
             return responseWithUserNotFound()
-
-        if (isUserDisabled(user))
+        }
+        
+        if (isUserDisabled(user)) {
             return respondWithUserDisabled()
-
+        }
+        
         respondWithAuthenticatedUser(user)
     } catch (err) {
         respondWithError(err)
@@ -78,6 +91,6 @@ const authenticateUserWithToken = async ({
 }
 
 module.exports = {
-  authenticateUserWithPassword,
-  authenticateUserWithToken
+    authenticateUserWithPassword,
+    authenticateUserWithToken,
 }

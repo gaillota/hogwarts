@@ -1,8 +1,8 @@
 const { MongoGateway } = require('../../database/gateways')
 const UserManager = require('../../database/managers/user.manager')
 const authController = require('../controllers/auth.controller')
-const setPassport = require('../../passport/config')
 const getUserSchema = require('../models/user.model')
+const setPassport = require('../../passport/config')
 
 module.exports = ({ config, router }) => {
     const { secret, users } = config
@@ -20,8 +20,9 @@ module.exports = ({ config, router }) => {
     // setPassport(secret, controller.loginWithToken)
     
     router.post('/register', controller.register)
+    router.get('/verify/:token', controller.verify)
+    router.post('/verify', controller.verify)
     // router.post('/login', controller.loginWithPassword)
-    // router.post('/verify', controller.verify)
     // router.post('/forgot', controller.forgot)
     // router.post('/reset', controller.reset)
 }

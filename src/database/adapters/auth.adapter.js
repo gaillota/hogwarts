@@ -13,10 +13,21 @@ module.exports = (manager, loginLabel) => {
         },
     })
     
+    const verify = () => ({
+        data: {
+            findUserWithToken(token) {
+                return manager.findOneByToken(token)
+            },
+            activateUser(user) {
+                return manager.verifyUser(user)
+            },
+        },
+    })
+    
     const loginWithPassword = () => ({
         data: {
             getUserWithLogin(login) {
-                return manager.findOneBy({ [loginLabel]: login })
+                return manager.findOneBy({ email: login })
             },
         },
     })
@@ -25,17 +36,6 @@ module.exports = (manager, loginLabel) => {
         data: {
             getUserWithToken(id) {
                 return manager.findOneById(id)
-            },
-        },
-    })
-    
-    const verify = () => ({
-        data: {
-            findUserWithToken(token) {
-                return manager.findOneByToken(token)
-            },
-            activateUser(user) {
-                return manager.verifyUser(user)
             },
         },
     })
@@ -73,9 +73,9 @@ module.exports = (manager, loginLabel) => {
     
     return {
         register,
+        verify,
         loginWithPassword,
         loginWithToken,
-        verify,
         forgot,
         reset,
     }

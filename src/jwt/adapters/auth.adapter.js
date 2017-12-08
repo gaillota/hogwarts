@@ -1,18 +1,20 @@
 const jwt = require('jsonwebtoken')
+
 const {
     ACCESS_DENIED_ERROR,
-    MISSING_PARAM_ERROR
+    MISSING_PARAM_ERROR,
 } = require('../../utils/errors')
 
-module.exports = (secret) => {
+module.exports = (secret, manager) => {
     const loginWithPassword = () => ({
         generateToken(user) {
-            const payload = {id: user._id}
+            const payload = { id: manager.getId(user) }
+            
             return jwt.sign(payload, secret)
         },
     })
-
-    const loginWithToken = ({sub: id}, done) => ({
+    
+    const loginWithToken = ({ sub: id }, done) => ({
         request: {
             token: id,
         },
@@ -34,7 +36,7 @@ module.exports = (secret) => {
             },
         },
     })
-
+    
     return {
         loginWithPassword,
         loginWithToken,

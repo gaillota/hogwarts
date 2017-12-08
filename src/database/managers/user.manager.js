@@ -1,3 +1,5 @@
+const bcrypt = require('../../utils/bcrypt')
+
 module.exports = ({ gateway }) => {
     function getId(user) {
         return user._id
@@ -18,28 +20,26 @@ module.exports = ({ gateway }) => {
     
     function persistVerificationTokenForUser(user, token) {
         return gateway.update(getId(user), {
-            tokens: {
-                verification: token
-            },
+            verification_token: token,
         })
     }
     
-    // verifyUser(user, password) {
-    //     return bcrypt.compare(SHA256(password), user.password.hash)
-    // }
-    //
-    // findOneByToken(token) {
-    //     return this.findOneBy({ verifyToken: token })
-    // }
-    //
-    // // Do not unset verifyToken in case verifyUser gets called several times
-    // verifyUser(user) {
-    //     return this.replace(this.getId(user), {
-    //         verified: true,
-    //     })
-    // }
-    //
-    //
+    function findOneByToken(token) {
+        return findOneBy({ verification_token: token })
+    }
+    
+    // Do not unset verifyToken in case verifyUser gets called several times
+    function verifyUser(user) {
+        return gateway.update(getId(user), {
+            verified: true,
+        })
+    }
+    
+    function checkPassword(password, user) {
+        return bcrypt.checkPassword(password, user.password)
+    }
+    
+    
     // findOneById(id) {
     //     return this.findOneBy({ _id: id })
     // }
@@ -71,8 +71,12 @@ module.exports = ({ gateway }) => {
     // }
     
     return {
+        getId,
         findOneBy,
         createUser,
         persistVerificationTokenForUser,
+        findOneByToken,
+        verifyUser,
+        checkPassword,
     }
 }
