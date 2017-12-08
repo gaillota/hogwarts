@@ -1,6 +1,5 @@
 const _forEach = require('lodash/forEach')
 
-const setupAuth = require('./auth.routing')
 const modelRouting = require('./model.routing')
 
 module.exports = ({ config, router }) => {
@@ -8,7 +7,6 @@ module.exports = ({ config, router }) => {
         models = {},
     } = config
     
-    setupAuth({ config, router })
     _forEach(models, (modelConfig) => {
         const modelRouter = modelRouting(modelConfig)
         

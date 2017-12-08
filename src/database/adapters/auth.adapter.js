@@ -1,4 +1,4 @@
-module.exports = (manager, loginLabel) => {
+module.exports = (manager) => {
     const register = () => ({
         data: {
             getUserByLogin(email) {
@@ -23,7 +23,7 @@ module.exports = (manager, loginLabel) => {
             },
             removeVerificationToken(user) {
                 return manager.removeVerificationToken(user)
-            }
+            },
         },
     })
     
@@ -31,6 +31,9 @@ module.exports = (manager, loginLabel) => {
         data: {
             getUserWithLogin(login) {
                 return manager.findOneBy({ email: login })
+            },
+            updateLastConnectionAt(user) {
+                return manager.updateLastConnectionAt(user)
             },
         },
     })
@@ -56,7 +59,7 @@ module.exports = (manager, loginLabel) => {
             },
             removeResetToken(user) {
                 return manager.removeResetToken(user)
-            }
+            },
         },
     })
     

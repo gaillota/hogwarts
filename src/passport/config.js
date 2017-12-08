@@ -1,14 +1,10 @@
 const passport = require('passport')
-const passportJWT = require('passport-jwt')
 
-const ExtractJwt = passportJWT.ExtractJwt
-const JwtStrategy = passportJWT.Strategy
+const strategies = require('./strategies')
 
-module.exports = (secretOrKey, authMiddleware) => {
-    const jwtOptions = {
-        jwtFromRequest: ExtractJwt.fromAuthHeader(),
-        secretOrKey,
-    }
-
-    passport.use('jwt-auth', new JwtStrategy(jwtOptions, authMiddleware))
+module.exports = ({ config, manager }) => {
+    const { secret } = config
+    const { jwt: jwtStrategy } = strategies({ secret, manager })
+    
+    passport.use(jwtStrategy)
 }

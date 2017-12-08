@@ -1,4 +1,4 @@
-const { NO_CONTENT } = require('http-status')
+const { CREATED, NO_CONTENT } = require('http-status')
 const {
     MISSING_PARAM_ERROR,
     MISMATCH_PASSWORD,
@@ -34,7 +34,7 @@ module.exports = () => {
                     next(ACCESS_DENIED_ERROR(`This email is already taken`))
                 },
                 respondWithUserSuccessfullyCreated() {
-                    res.status(NO_CONTENT).end()
+                    res.status(CREATED).end()
                 },
                 respondWithError(err) {
                     next(err)
@@ -98,10 +98,11 @@ module.exports = () => {
                 respondWithUserNotVerified() {
                     next(USER_NOT_VERIFIED)
                 },
-                respondWithUserToken(token) {
+                respondWithUserAndToken(user, token) {
                     res.json({
                         data: {
-                            token,
+                            user,
+                            accessToken: token
                         },
                     })
                 },

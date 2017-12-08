@@ -17,7 +17,7 @@ module.exports = ({ config, router }) => {
     const manager = UserManager({ gateway })
     const controller = authController({ secret, manager })
     
-    // setPassport(secret, controller.loginWithToken)
+    setPassport({ config, manager })
     
     router.post('/register', controller.register)
     router.get('/verify/:token', controller.verify)

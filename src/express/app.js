@@ -5,7 +5,9 @@ const compress = require('compression')
 const methodOverride = require('method-override')
 const cors = require('cors')
 const helmet = require('helmet')
+const passport = require('passport')
 
+const authRouting = require('./routing/auth.routing')
 const routing = require('./routing/routing')
 const {
     errorMiddleware,
@@ -22,9 +24,11 @@ module.exports = (config) => {
     } = config
     
     const app = express()
-    const router = express.Router()
+    const authRouter = express.Router()
+    const apiRouter = express.Router()
     
-    routing({ config, router })
+    authRouting({ config, router: authRouter })
+    routing({ config, router: apiRouter })
     
     // Request logging, dev: console | production: file
     app.use(logger('combined'))
@@ -48,10 +52,14 @@ module.exports = (config) => {
     // Enable CORS (Cross Origin Resource Sharing)
     app.use(cors())
     
+    // enable passport authentication
+    app.use(passport.initialize())
+    
     if (middlewares.length) {
         app.use(middlewares)
     }
-    app.use(endpoint, router)
+    app.use(authRouter)
+    app.use(endpoint, apiRouter)
     app.use(responseMiddleware)
     app.use(notFoundMiddleware)
     app.use(errorMiddleware)

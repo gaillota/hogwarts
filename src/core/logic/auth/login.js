@@ -6,6 +6,7 @@ async function authenticateUserWithPassword({
                                                 data: {
                                                     getUserWithLogin,
                                                     generateToken,
+                                                    updateLastConnectionAt
                                                 },
                                                 mixins: {
                                                     verifyPassword,
@@ -18,7 +19,7 @@ async function authenticateUserWithPassword({
                                                     respondWithUserDisabled,
                                                     respondWithUserNotVerified,
                                                     respondWithWrongPassword,
-                                                    respondWithUserToken,
+                                                    respondWithUserAndToken,
                                                     respondWithError,
                                                 },
                                             }) {
@@ -27,7 +28,7 @@ async function authenticateUserWithPassword({
             return respondWithMissingParameter(!login && 'login' || !password && 'password')
         }
         
-        const user = await getUserWithLogin(login)
+        let user = await getUserWithLogin(login)
         if (!user) {
             return respondWithUserNotFound()
         }
@@ -45,7 +46,9 @@ async function authenticateUserWithPassword({
         }
         
         const token = await generateToken(user)
-        respondWithUserToken(token)
+        user = await updateLastConnectionAt(user)
+        
+        respondWithUserAndToken(user, token)
     } catch (err) {
         respondWithError(err)
     }

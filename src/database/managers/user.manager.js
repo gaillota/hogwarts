@@ -6,7 +6,12 @@ module.exports = ({ gateway }) => {
     }
     
     function findOneBy(query) {
+        // TODO: Work on that `then` bullshit
         return gateway.list(query, 1).then(([user]) => user)
+    }
+    
+    function findById(id) {
+        return gateway.findById(id)
     }
     
     function createUser(email, hash) {
@@ -69,6 +74,12 @@ module.exports = ({ gateway }) => {
         })
     }
     
+    function updateLastConnectionAt(user) {
+        return gateway.update(getId(user), {
+            lastConnectionAt: new Date()
+        })
+    }
+    
     return {
         getId,
         findOneBy,
@@ -81,6 +92,8 @@ module.exports = ({ gateway }) => {
         persistToken,
         findOneByResetToken,
         updatePassword,
-        removeResetToken
+        removeResetToken,
+        updateLastConnectionAt,
+        findById
     }
 }
