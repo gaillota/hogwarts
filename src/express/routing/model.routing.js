@@ -75,7 +75,7 @@ const modelRouting = ({ config }) => {
         disabled,
         anonymous,
         roles,
-        custom: customRoutes = [],
+        custom: customRoutes,
     } = config
     const modelMiddlewares = []
     let { middlewares = [] } = config
@@ -103,11 +103,13 @@ const modelRouting = ({ config }) => {
         router.use(modelMiddlewares)
     }
     
-    // Define custom routes before default crud
-    customRoutes.forEach((customRoute) => {
-        console.log(`Configuring custom route with path ${customRoute.endpoint}`)
-        customRouting({ route: customRoute, router })
-    })
+    if (customRoutes && _isArray(customRoutes)) {
+        // Define custom routes before default crud
+        customRoutes.forEach((customRoute) => {
+            console.log(`Configuring custom route with path ${customRoute.endpoint}`)
+            customRouting({ route: customRoute, router })
+        })
+    }
     
     if (!disabled) {
         console.log('Configuring default CRUD routing')
@@ -123,6 +125,6 @@ module.exports = ({ config, router }) => {
     const modelRouter = modelRouting({ config })
     
     router.use(endpoint, modelRouter)
-    
-    return router
 }
+
+module.exports.customRouting = customRouting

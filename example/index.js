@@ -12,7 +12,7 @@ const config = {
     mimeTypes: ['application/json', 'application/x-www-form-urlencoded', 'multipart/form-data'],
     users: {
         roles: ['USER', 'ADMIN'], // Default
-        defaultRole: 'USER',
+        defaultRole: 'USER', // Default
     },
     secret: 'DumbledoreIsDead',
     middlewares: [
@@ -25,6 +25,28 @@ const config = {
             next()
         }
     ],
+    custom: [
+        {
+            endpoint: '/custom',
+            method: HTTP_METHODS.GET,
+            anonymous: false, // Default
+    
+            // roles: 'String || Function|| Array',
+    
+            middlewares: [
+                (req, res, next) => {
+                    console.log('Middleware for global custom method')
+                    next()
+                },
+            ],
+            action: (req, res, next) => {
+                console.log('Global custom method action')
+                res.json({
+                    data: 'Global custom action'
+                })
+            },
+        }
+    ]
 }
 
 const articlesConfig = {
@@ -68,7 +90,7 @@ const articlesConfig = {
             
             middlewares: [
                 (req, res, next) => {
-                    console.log('Middleware for custom article method')
+                    console.log('Middleware for /articles custom method')
                     next()
                 },
             ],

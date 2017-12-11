@@ -19,12 +19,12 @@ const jwt = ({ manager }) => async (payload, done) => {
 }
 
 module.exports = ({ secret, manager }) => {
-    const jwtOptions = {
+    const options = {
         jwtFromRequest: ExtractJwt.fromAuthHeader(),
         secretOrKey: secret,
     }
     
     return {
-        jwt: new JwtStrategy(jwtOptions, jwt({ manager })),
+        jwt: new JwtStrategy(options, jwt({ manager })),
     }
 }
