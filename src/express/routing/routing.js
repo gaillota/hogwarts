@@ -1,5 +1,5 @@
-const forEach = require('lodash/forEach')
-const isArray = require('lodash/isArray')
+const _forEach = require('lodash/forEach')
+const _isArray = require('lodash/isArray')
 
 const modelRouting = require('./model.routing')
 
@@ -9,7 +9,7 @@ module.exports = ({ config, router }) => {
         custom,
     } = config
     
-    if (custom && isArray(custom)) {
+    if (_isArray(custom)) {
         custom.forEach((customRoute) => {
             modelRouting.customRouting({
                 route: customRoute,
@@ -18,7 +18,7 @@ module.exports = ({ config, router }) => {
         })
     }
     
-    forEach(models, (modelConfig) => {
-        modelRouting({ config: modelConfig, router })
+    _forEach(models, (model) => {
+        modelRouting({ config: model, router })
     })
 }

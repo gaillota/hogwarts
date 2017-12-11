@@ -1,4 +1,4 @@
-const getSchema = ({ roles, defaultRole }) => ({
+const getSchema = ({ roles }) => ({
     email: {
         type: String,
         required: true,
@@ -20,10 +20,10 @@ const getSchema = ({ roles, defaultRole }) => ({
         facebook: String,
         google: String,
     },
-    role: {
-        type: String,
+    roles: {
+        type: [String],
         enum: roles,
-        default: defaultRole,
+        default: [],
     },
     lastLogin: Date,
     disabled: Boolean,

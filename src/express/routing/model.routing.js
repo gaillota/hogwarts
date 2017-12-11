@@ -35,12 +35,11 @@ const customRouting = ({ route, router }) => {
     const {
         endpoint,
         method,
-        anonymous,
         disabled,
         roles,
         action,
     } = route
-    let { middlewares = [] } = route
+    let { anonymous, middlewares = [] } = route
     
     if (disabled) {
         return
@@ -48,6 +47,10 @@ const customRouting = ({ route, router }) => {
     
     if (typeof middlewares === 'function') {
         middlewares = [middlewares]
+    }
+    
+    if (roles && roles.length) {
+        anonymous = false
     }
     
     const routeMiddlewares = []
@@ -73,19 +76,21 @@ const modelRouting = ({ config }) => {
     const router = express.Router()
     const {
         disabled,
-        anonymous,
         roles,
         custom: customRoutes,
     } = config
     const modelMiddlewares = []
-    let { middlewares = [] } = config
+    let { anonymous, middlewares = [] } = config
     
     if (typeof middlewares === 'function') {
         middlewares = [middlewares]
     }
     
+    if (roles && roles.length) {
+        anonymous = false
+    }
+    
     if (!anonymous) {
-        console.log('Adding auth middleware')
         modelMiddlewares.push(authenticate())
         modelMiddlewares.push(preventAnonymous())
     }
@@ -106,13 +111,11 @@ const modelRouting = ({ config }) => {
     if (customRoutes && _isArray(customRoutes)) {
         // Define custom routes before default crud
         customRoutes.forEach((customRoute) => {
-            console.log(`Configuring custom route with path ${customRoute.endpoint}`)
             customRouting({ route: customRoute, router })
         })
     }
     
     if (!disabled) {
-        console.log('Configuring default CRUD routing')
         crudRouting({ config, router })
     }
     

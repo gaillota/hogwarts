@@ -12,7 +12,6 @@ const config = {
     mimeTypes: ['application/json', 'application/x-www-form-urlencoded', 'multipart/form-data'],
     users: {
         roles: ['USER', 'ADMIN'], // Default
-        defaultRole: 'USER', // Default
     },
     secret: 'DumbledoreIsDead',
     middlewares: [
@@ -31,7 +30,7 @@ const config = {
             method: HTTP_METHODS.GET,
             anonymous: false, // Default
     
-            // roles: 'String || Function|| Array',
+            roles: 'ADMIN',
     
             middlewares: [
                 (req, res, next) => {
@@ -73,6 +72,8 @@ const articlesConfig = {
     
     anonymous: true,
     
+    roles: ['ADMIN'],
+    
     middlewares: [
         (req, res, next) => {
             console.log('Middleware for article model')
@@ -86,7 +87,7 @@ const articlesConfig = {
             method: HTTP_METHODS.GET,
             anonymous: false, // Default
             
-            // roles: 'String || Function|| Array',
+            roles: 'USER',
             
             middlewares: [
                 (req, res, next) => {

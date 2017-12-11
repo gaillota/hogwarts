@@ -21,10 +21,10 @@ Hogwarts uses JWT as authentication system:
 
 1. When the user log himself into the system, the API returns an JWT token.
 2. This token must be saved locally (e.g in the local storage, or wherever you want)
-3. Whenever a request wants to access a private resource, it must include the JWT token:
-   - In the header of the request
-      - `Authorization: JWT <token>`
-      - `X-Access-Token: <token>`
+3. Whenever a request wants to access a private resource, it must include the JWT token in the header of the request
+```
+Authorization: JWT <token>
+```
       
 ## Usage
 **App config**
@@ -53,3 +53,5 @@ const appConfig = {
     jwt_secret: 'shhhhhhh'
 }
 ```
+
+The order in which you declare your middlewares is the same in which they will get passed through
