@@ -49,7 +49,7 @@ const articlesConfig = {
     
     disabled: false,
     
-    anonymous: false,
+    anonymous: true,
     
     middlewares: [
         (req, res, next) => {

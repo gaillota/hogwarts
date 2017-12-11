@@ -1,7 +1,6 @@
 const passportJwt = require('passport-jwt')
 
-const JwtStrategy = passportJwt.Strategy
-const ExtractJwt = passportJwt.ExtractJwt
+const { ExtractJwt, Strategy: JwtStrategy } = passportJwt
 
 const jwt = ({ manager }) => async (payload, done) => {
     console.log('--- JWT payload ---', payload)
@@ -26,6 +25,6 @@ module.exports = ({ secret, manager }) => {
     }
     
     return {
-        jwt: new JwtStrategy(jwtOptions, jwt({ manager }))
+        jwt: new JwtStrategy(jwtOptions, jwt({ manager })),
     }
 }
