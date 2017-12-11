@@ -1,8 +1,10 @@
 const passportJwt = require('passport-jwt')
 
-const { Strategy: JwtStrategy, ExtractJwt } = passportJwt
+const JwtStrategy = passportJwt.Strategy
+const ExtractJwt = passportJwt.ExtractJwt
 
 const jwt = ({ manager }) => async (payload, done) => {
+    console.log('--- JWT payload ---', payload)
     try {
         const { sub: id } = payload
         const user = await manager.findById(id)

@@ -6,7 +6,7 @@ async function authenticateUserWithPassword({
                                                 data: {
                                                     getUserWithLogin,
                                                     generateToken,
-                                                    updateLastConnectionAt
+                                                    updateLastConnectionAt,
                                                 },
                                                 mixins: {
                                                     verifyPassword,
@@ -54,46 +54,4 @@ async function authenticateUserWithPassword({
     }
 }
 
-async function authenticateUserWithToken({
-                                             request: {
-                                                 token,
-                                             },
-                                             data: {
-                                                 getUserWithToken,
-                                             },
-                                             mixins: {
-                                                 isUserDisabled,
-                                             },
-                                             response: {
-                                                 respondWithTokenMissing,
-                                                 responseWithUserNotFound,
-                                                 respondWithUserDisabled,
-                                                 respondWithAuthenticatedUser,
-                                                 respondWithError,
-                                             },
-                                         }) {
-    try {
-        if (!token) {
-            return respondWithTokenMissing()
-        }
-        
-        const user = await getUserWithToken(token)
-        
-        if (!user) {
-            return responseWithUserNotFound()
-        }
-        
-        if (isUserDisabled(user)) {
-            return respondWithUserDisabled()
-        }
-        
-        respondWithAuthenticatedUser(user)
-    } catch (err) {
-        respondWithError(err)
-    }
-}
-
-module.exports = {
-    authenticateUserWithPassword,
-    authenticateUserWithToken,
-}
+module.exports = authenticateUserWithPassword

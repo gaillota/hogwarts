@@ -63,19 +63,10 @@ module.exports = (manager) => {
         },
     })
     
-    const loginWithToken = () => ({
-        data: {
-            getUserWithToken(id) {
-                return manager.findOneById(id)
-            },
-        },
-    })
-    
     return {
         register,
         verify,
         loginWithPassword,
-        loginWithToken,
         forgot,
         reset,
     }

@@ -3,7 +3,8 @@ const validate = require('express-validation')
 const _isArray = require('lodash/isArray')
 
 const { list } = require('../validations/crud.validation')
-const authenticate = require('../middlewares/authenticate.middleware')
+const authenticate = require('../../passport/authenticate')
+const preventAnonymous = require('../middlewares/anonymous-guard.middleware')
 const isGranted = require('../middlewares/roles-guard.middleware')
 const crudController = require('../controllers/crud.controller')
 const { MongoGateway } = require('../../database/gateways')
@@ -22,7 +23,7 @@ const crudRouting = ({ config, router }) => {
     router.route('/')
         .get(validate(list), controller.list)
         .post(controller.create)
-
+    
     router.route('/:id')
         .get(controller.one)
         .patch(controller.update)
@@ -30,27 +31,33 @@ const crudRouting = ({ config, router }) => {
         .delete(controller.remove)
 }
 
-const customRouting = (route, router) => {
+const customRouting = ({ route, router }) => {
     const {
         endpoint,
         method,
         anonymous,
         disabled,
         roles,
-        middlewares = [],
         action,
     } = route
+    let { middlewares = [] } = route
     
     if (disabled) {
         return
     }
     
+    if (typeof middlewares === 'function') {
+        middlewares = [middlewares]
+    }
+    
     const routeMiddlewares = []
     
     if (!anonymous) {
-        routeMiddlewares.push(authenticate)
+        routeMiddlewares.push(authenticate())
+        routeMiddlewares.push(preventAnonymous())
     }
     
+    // TODO: Check roles
     if (roles) {
         routeMiddlewares.push(isGranted(roles))
     }
@@ -67,8 +74,10 @@ const modelRouting = ({ config }) => {
     const {
         disabled,
         anonymous,
-        custom = [],
+        roles,
+        custom: customRoutes = [],
     } = config
+    const modelMiddlewares = []
     let { middlewares = [] } = config
     
     if (typeof middlewares === 'function') {
@@ -76,27 +85,41 @@ const modelRouting = ({ config }) => {
     }
     
     if (!anonymous) {
-        router.use(authenticate)
+        console.log('Adding auth middleware')
+        modelMiddlewares.push(authenticate())
+        modelMiddlewares.push(preventAnonymous())
+    }
+    
+    // TODO: Check roles
+    if (roles) {
+        modelMiddlewares.push(isGranted(roles))
     }
     
     if (_isArray(middlewares) && middlewares.length) {
-        router.use(middlewares)
+        modelMiddlewares.push(middlewares)
+    }
+    
+    if (modelMiddlewares.length) {
+        router.use(modelMiddlewares)
     }
     
     // Define custom routes before default crud
-    custom.forEach((route) => {
-        customRouting(route, router)
+    customRoutes.forEach((customRoute) => {
+        console.log(`Configuring custom route with path ${customRoute.endpoint}`)
+        customRouting({ route: customRoute, router })
     })
     
     if (!disabled) {
+        console.log('Configuring default CRUD routing')
         crudRouting({ config, router })
     }
     
     return router
 }
 
-module.exports = ({ endpoint, ...config }) => {
-    const router = express.Router()
+module.exports = ({ config, router }) => {
+    const { endpoint } = config
+    console.log(`--- Configuring routing for ${endpoint} ---`)
     const modelRouter = modelRouting({ config })
     
     router.use(endpoint, modelRouter)

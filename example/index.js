@@ -47,9 +47,9 @@ const articlesConfig = {
     },
     timestamps: true,
     
-    disabled: true,
+    disabled: false,
     
-    anonymous: true,
+    anonymous: false,
     
     middlewares: [
         (req, res, next) => {
@@ -62,7 +62,7 @@ const articlesConfig = {
         {
             endpoint: '/custom',
             method: HTTP_METHODS.GET,
-            anonymous: true, // Default
+            anonymous: false, // Default
             
             // roles: 'String || Function|| Array',
             

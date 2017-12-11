@@ -8,8 +8,6 @@ module.exports = ({ config, router }) => {
     } = config
     
     _forEach(models, (modelConfig) => {
-        const modelRouter = modelRouting(modelConfig)
-        
-        router.use(modelRouter)
+        modelRouting({ config: modelConfig, router })
     })
 }

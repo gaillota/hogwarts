@@ -2,7 +2,6 @@ const crypto = require('crypto')
 
 const {
     authenticateUserWithPassword,
-    authenticateUserWithToken,
     createUser,
     forgotPassword,
     resetPassword,
@@ -108,7 +107,7 @@ module.exports = ({ secret, manager }) => {
     function reset(req, res, next) {
         const { request, response } = expressAdapter.reset(req, res, next)
         const { data } = databaseAdapter.reset()
-        
+    
         resetPassword({
             request,
             response,
@@ -121,25 +120,10 @@ module.exports = ({ secret, manager }) => {
         })
     }
     
-    function loginWithToken(req, res, next) {
-        const { request, response } = jwtAdapter.loginWithToken(req, res, next)
-        const { data } = databaseAdapter.loginWithPassword()
-        
-        authenticateUserWithToken({
-            request,
-            response,
-            data,
-            mixins: {
-                isUserDisabled: user => user.disabled,
-            },
-        })
-    }
-    
     return {
         register,
         verify,
         loginWithPassword,
-        loginWithToken,
         forgot,
         reset,
     }

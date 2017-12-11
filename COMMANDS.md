@@ -20,5 +20,8 @@ docker-compose run --rm --service-ports app yarn run dev
 docker rm -f $(docker ps -aq)
 
 // See every running containers
-docker ps -a
+docker ps
+
+// Tail log for specific container
+docker logs -f --tail 50 <containerIDorName>
 ```

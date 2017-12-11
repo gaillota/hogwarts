@@ -6,5 +6,5 @@ module.exports = ({ config, manager }) => {
     const { secret } = config
     const { jwt: jwtStrategy } = strategies({ secret, manager })
     
-    passport.use(jwtStrategy)
+    passport.use('jwt', jwtStrategy)
 }
