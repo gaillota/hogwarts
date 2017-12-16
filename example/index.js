@@ -24,7 +24,8 @@ const config = {
             next()
         }
     ],
-    custom: [
+    // gateway,
+    customRoutes: [
         {
             endpoint: '/custom',
             method: HTTP_METHODS.GET,
@@ -68,11 +69,11 @@ const articlesConfig = {
     },
     timestamps: true,
     
-    disabled: false,
+    defaultCrud: false,
     
     anonymous: true,
     
-    roles: ['ADMIN'],
+    // roles: ['ADMIN'],
     
     middlewares: [
         (req, res, next) => {
@@ -81,26 +82,43 @@ const articlesConfig = {
         },
     ],
     
-    custom: [
+    customRoutes: [
         {
             endpoint: '/custom',
             method: HTTP_METHODS.GET,
             anonymous: false, // Default
-            
+        
             roles: 'USER',
-            
+        
             middlewares: [
                 (req, res, next) => {
                     console.log('Middleware for /articles custom method')
                     next()
                 },
             ],
-            action: (req, res, next) => {
+            action: gateway => (req, res, next) => {
                 console.log('Article custom method action')
                 res.json({
                     data: 'Custom action for article model'
                 })
             },
+        },
+        {
+            endpoint: '/:id',
+            method: HTTP_METHODS.GET,
+            anonymous: false,
+            roles: 'USER',
+            middlewares: [
+                (req, res, next) => {
+                    console.log('Middleware for custom GET /:id')
+                    next()
+                }
+            ],
+            action: gateway => (req, res, next) => {
+                res.json({
+                    data: 'Custom crud method'
+                })
+            }
         },
     ],
 }

@@ -4,22 +4,11 @@ const _isArray = require('lodash/isArray')
 
 const { list } = require('../validations/crud.validation')
 const authenticate = require('../../passport/authenticate')
-const preventAnonymous = require('../middlewares/anonymous-guard.middleware')
+const denyAnonymous = require('../middlewares/anonymous-guard.middleware')
 const isGranted = require('../middlewares/roles-guard.middleware')
-const crudController = require('../controllers/crud.controller')
-const { MongoGateway } = require('../../database/gateways')
+const CrudController = require('../controllers/crud.controller')
 
-const crudRouting = ({ config, router }) => {
-    const {
-        name,
-        schema,
-        timestamps,
-    } = config
-    // Gateway passed via config (or default)
-    const gateway = MongoGateway({ modelName: name, schema, timestamps })
-    // Controller used for crud middlewares
-    const controller = crudController(name, gateway)
-    
+const crudRouting = ({ router, controller }) => {
     router.route('/')
         .get(validate(list), controller.list)
         .post(controller.create)
@@ -31,15 +20,16 @@ const crudRouting = ({ config, router }) => {
         .delete(controller.remove)
 }
 
-const customRouting = ({ route, router }) => {
+const customRouting = ({ route, router, gateway }) => {
     const {
         endpoint,
         method,
         disabled,
+        anonymous,
         roles,
         action,
     } = route
-    let { anonymous, middlewares = [] } = route
+    let { middlewares = [] } = route
     
     if (disabled) {
         return
@@ -49,15 +39,11 @@ const customRouting = ({ route, router }) => {
         middlewares = [middlewares]
     }
     
-    if (roles && roles.length) {
-        anonymous = false
-    }
-    
     const routeMiddlewares = []
     
     if (!anonymous) {
         routeMiddlewares.push(authenticate())
-        routeMiddlewares.push(preventAnonymous())
+        routeMiddlewares.push(denyAnonymous())
     }
     
     // TODO: Check roles
@@ -69,30 +55,35 @@ const customRouting = ({ route, router }) => {
         routeMiddlewares.push(...middlewares)
     }
     
-    router.route(endpoint)[method.toLowerCase()](routeMiddlewares, action)
+    router.route(endpoint)[method.toLowerCase()](routeMiddlewares, action(gateway))
 }
 
-const modelRouting = ({ config }) => {
+const modelRouting = ({ config, Gateway }) => {
     const router = express.Router()
     const {
-        disabled,
+        name,
+        schema,
+        timestamps,
+        defaultCrud,
         roles,
-        custom: customRoutes,
+        anonymous,
+        customRoutes,
     } = config
     const modelMiddlewares = []
-    let { anonymous, middlewares = [] } = config
+    let { middlewares = [] } = config
+    
+    // Gateway passed via config (or default)
+    const gateway = Gateway({ modelName: name, schema, timestamps })
+    // Controller used for crud middlewares
+    const controller = CrudController(name, gateway)
     
     if (typeof middlewares === 'function') {
         middlewares = [middlewares]
     }
     
-    if (roles && roles.length) {
-        anonymous = false
-    }
-    
     if (!anonymous) {
         modelMiddlewares.push(authenticate())
-        modelMiddlewares.push(preventAnonymous())
+        modelMiddlewares.push(denyAnonymous())
     }
     
     // TODO: Check roles
@@ -111,12 +102,12 @@ const modelRouting = ({ config }) => {
     if (customRoutes && _isArray(customRoutes)) {
         // Define custom routes before default crud
         customRoutes.forEach((customRoute) => {
-            customRouting({ route: customRoute, router })
+            customRouting({ route: customRoute, router, gateway })
         })
     }
     
-    if (!disabled) {
-        crudRouting({ config, router })
+    if (!defaultCrud) {
+        crudRouting({ router, controller })
     }
     
     return router
@@ -130,4 +121,24 @@ module.exports = ({ config, router }) => {
     router.use(endpoint, modelRouter)
 }
 
+// Export custom routing for global custom routes
 module.exports.customRouting = customRouting
+
+// const routing = ({ config }) => {
+//     const {
+//         name,
+//         endpoint,
+//         schema,
+//         timestamps,
+//         defaultCrud,
+//         anonymous,
+//         middlewares,
+//         disabled,
+//         roles,
+//         method,
+//         action,
+//         customRoutes
+//     } = config
+//
+//
+// }

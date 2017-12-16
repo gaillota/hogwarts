@@ -2,15 +2,17 @@ const _forEach = require('lodash/forEach')
 const _isArray = require('lodash/isArray')
 
 const modelRouting = require('./model.routing')
+const GatewayProvider = require('../../database/gateways')
 
 module.exports = ({ config, router }) => {
     const {
         models = {},
-        custom,
+        customRoutes,
     } = config
+    const Gateway = GatewayProvider({ config })
     
-    if (_isArray(custom)) {
-        custom.forEach((customRoute) => {
+    if (_isArray(customRoutes)) {
+        customRoutes.forEach((customRoute) => {
             modelRouting.customRouting({
                 route: customRoute,
                 router,
@@ -19,6 +21,6 @@ module.exports = ({ config, router }) => {
     }
     
     _forEach(models, (model) => {
-        modelRouting({ config: model, router })
+        modelRouting({ config: model, router, Gateway })
     })
 }
