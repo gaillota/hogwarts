@@ -2,7 +2,6 @@ const { CREATED, NO_CONTENT } = require('http-status')
 const {
     MISSING_PARAM_ERROR,
     MISMATCH_PASSWORD,
-    NOT_FOUND_ERROR,
     WRONG_PASSWORD_ERROR,
     ACCESS_DENIED_ERROR,
     USER_NOT_FOUND,

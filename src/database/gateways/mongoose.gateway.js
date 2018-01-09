@@ -25,7 +25,7 @@ module.exports = ({ modelName, schema, timestamps = true }) => {
     }
     
     /**
-     * Count documents
+     * Count documents (database system usually have built-in count function)
      *
      * @param query
      * @return Promise<Number>

@@ -4,7 +4,7 @@ mongoose.Promise = global.Promise
 
 // print mongoose logs in dev env
 if (process.env.NODE_ENV === 'development') {
-    mongoose.set('debug', true);
+    mongoose.set('debug', true)
 }
 
 const db = mongoose.connection
@@ -26,16 +26,16 @@ db.on('disconnected', () => {
 })
 
 module.exports.connect = ({
-                     username = '',
-                     password = '',
-                     host = 'mongo',
-                     port = 27017,
-                     database = 'hogwarts',
-                     options: opts = {},
-                 } = {}) => {
+                              username = '',
+                              password = '',
+                              host = 'mongo',
+                              port = 27017,
+                              database = 'hogwarts',
+                              options: opts = {},
+                          } = {}) => {
     const options = {
         ...defaultConfig,
-        ...opts
+        ...opts,
     }
     const credentials = `${username && password && username + ':' + password + '@'}`
     const uri = process.env.MONGO_URI || `mongodb://${credentials}${host}:${port}/${database}`

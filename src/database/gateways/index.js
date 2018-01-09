@@ -1,3 +1,3 @@
-const MongoGateway = require('./mongo.gateway')
+const MongooseGateway = require('./mongoose.gateway')
 
-module.exports = ({ config }) => config.gateway || MongoGateway
+module.exports = ({ config }) => config.gateway || MongooseGateway

@@ -131,7 +131,7 @@ module.exports.customRouting = customRouting
 //         schema,
 //         timestamps,
 //         defaultCrud,
-//         anonymous,
+//         restricted,
 //         middlewares,
 //         disabled,
 //         roles,

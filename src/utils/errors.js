@@ -18,7 +18,7 @@ module.exports.USER_NOT_FOUND = {
 module.exports.USER_NOT_VERIFIED = {
     status: 403,
     message: 'Please activate your account to be able to login'
-}
+}m
 
 module.exports.USER_ALREADY_VERIFIED = {
     status: 403,

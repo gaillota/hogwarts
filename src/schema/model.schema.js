@@ -27,7 +27,7 @@ const articlesConfig = {
     // },
     disabled: true,
     
-    anonymous: true,
+    restricted: true,
     
     roles: 'String || Function|| Array',
     
@@ -42,7 +42,7 @@ const articlesConfig = {
         {
             endpoint: '/custom',
             method: HTTP_METHODS.GET,
-            anonymous: false, // Default
+            restricted: false, // Default
             
             roles: 'String || Function|| Array',
             

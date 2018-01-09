@@ -1,6 +1,8 @@
 /* eslint-disable no-dupe-keys */
+const mongoose = require('mongoose')
+
 const hogwarts = require('../src/hogwarts')
-const mongoose = require('./mongo')
+const mongo = require('./mongo')
 
 const { HTTP_METHODS, CRUD_METHODS } = hogwarts
 const env = process.env.NODE_ENV || 'development'
@@ -24,7 +26,16 @@ const config = {
             next()
         }
     ],
-    // gateway,
+    gateway({ modelName, modelSchema }) {
+        const schema = mongoose.Schema(modelSchema)
+        const Model = mongoose.model(modelName, schema)
+        
+        const customMethod = id => Model.findOneById(id).exec()
+        
+        return {
+            customMethod
+        }
+    },
     customRoutes: [
         {
             endpoint: '/custom',
@@ -71,7 +82,7 @@ const articlesConfig = {
     
     defaultCrud: false,
     
-    anonymous: true,
+    restricted: true,
     
     // roles: ['ADMIN'],
     
@@ -86,7 +97,7 @@ const articlesConfig = {
         {
             endpoint: '/custom',
             method: HTTP_METHODS.GET,
-            anonymous: false, // Default
+            restricted: false, // Default
         
             roles: 'USER',
         
@@ -96,8 +107,10 @@ const articlesConfig = {
                     next()
                 },
             ],
-            action: gateway => (req, res, next) => {
+            action: gateway => async (req, res, next) => {
                 console.log('Article custom method action')
+                const articlesId = req.params.id
+                await gateway.customMethod(articlesId)
                 res.json({
                     data: 'Custom action for article model'
                 })
@@ -106,7 +119,7 @@ const articlesConfig = {
         {
             endpoint: '/:id',
             method: HTTP_METHODS.GET,
-            anonymous: false,
+            restricted: false,
             roles: 'USER',
             middlewares: [
                 (req, res, next) => {
@@ -128,7 +141,7 @@ const app = hogwarts()
 app.configure(config)
 app.registerModel(articlesConfig)
 
-mongoose.connect()
+mongo.connect()
 
 app.start().then(() => {
     console.info(`Server listening on port ${port} (${env})`)
