@@ -1,4 +1,4 @@
-# Hogwarts
+# [WIP] Hogwarts
 Hogwarts is a school of magic for Witchcraft and Wizardry
 
 ## Technologies
@@ -54,4 +54,4 @@ const appConfig = {
 }
 ```
 
-The order in which you declare your middlewares is the same in which they will get passed through
+/!\ The order in which you declare your middlewares is the same in which they will get passed through
