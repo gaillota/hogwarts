@@ -27,4 +27,4 @@ Authorization: JWT <token>
 ```
       
 ## Usage
-Checkout the [exemple](https://github.com/gaillota/hogwarts/edit/master/exemple) directory for more
+Checkout the [exemple](https://github.com/gaillota/hogwarts/tree/master/example) directory for more
