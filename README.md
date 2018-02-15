@@ -27,31 +27,4 @@ Authorization: JWT <token>
 ```
       
 ## Usage
-**App config**
-```
-const appConfig = {
-    // The root path for the generated API
-    root_path: '/api/v2',
-    
-    // The port on which the API will listen
-    port: 8080,
-    
-    // Database infos
-    database: {
-        // Required
-        host: 'localhost',
-        port: 27017,
-        
-        // Optional
-        username: 'albus',
-        password: 'SherbetLemon',
-        database: 'hogwart',
-        options: {}
-    },
-    
-    // Secret token for JWT
-    jwt_secret: 'shhhhhhh'
-}
-```
-
-/!\ The order in which you declare your middlewares is the same in which they will get passed through
+Checkout the [exemple](https://github.com/gaillota/hogwarts/edit/master/exemple) directory for more
